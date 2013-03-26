@@ -34,5 +34,5 @@ Ext.define('catcher.controller.MatchController', {
 		matchDetail.query("matchPlayerList[name=awayTeam]")[0].setStore(awayPlayers);
 	}
 	
-	// Pridat metodu pro zadani bodu.
+	// TODO Ondra: pridat metodu pro zadani bodu.
 });
