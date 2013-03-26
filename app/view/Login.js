@@ -12,7 +12,7 @@ Ext.define("catcher.view.Login", {
 			{
 				xtype: "fieldset",
 				title: "Přihlášení k turnaji",
-				instructions: "Vyberte jeden z aktuálních turnajů a zadejte přístupové heslo",
+				instructions: "Vyberte jeden z aktuálních turnajů, zatím free access",
 				items: [
 					{
 						xtype: "selectfield",
