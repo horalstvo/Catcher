@@ -1,0 +1,2 @@
+php_value error_reporting 6143
+php_flag display_errors On

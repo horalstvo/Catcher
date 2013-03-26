@@ -1,0 +1,545 @@
+[
+	  	{
+			"player_id":1,
+			"number":42,
+			"name":"Vladimír",
+			"surname":"Malina",
+			"team":4
+			},
+		
+	  	{
+			"player_id":2,
+			"number":18,
+			"name":"Cyril",
+			"surname":"Lessy",
+			"team":4
+			},
+		
+	  	{
+			"player_id":3,
+			"number":15,
+			"name":"Leonard",
+			"surname":"Vondrka",
+			"team":4
+			},
+		
+	  	{
+			"player_id":4,
+			"number":3,
+			"name":"Václav",
+			"surname":"Vomáčka",
+			"team":4
+			},
+		
+	  	{
+			"player_id":5,
+			"number":55,
+			"name":"Jaromír",
+			"surname":"Hašek",
+			"team":4
+			},
+		
+	  	{
+			"player_id":6,
+			"number":86,
+			"name":"Matěj",
+			"surname":"Novák",
+			"team":4
+			},
+		
+	  	{
+			"player_id":7,
+			"number":94,
+			"name":"Vladimír",
+			"surname":"Strejček",
+			"team":4
+			},
+		
+	  	{
+			"player_id":8,
+			"number":12,
+			"name":"František",
+			"surname":"Novák",
+			"team":5
+			},
+		
+	  	{
+			"player_id":9,
+			"number":20,
+			"name":"Bartoloměj",
+			"surname":"Pilát",
+			"team":5
+			},
+		
+	  	{
+			"player_id":10,
+			"number":97,
+			"name":"Petr",
+			"surname":"Malina",
+			"team":5
+			},
+		
+	  	{
+			"player_id":11,
+			"number":12,
+			"name":"Pavel",
+			"surname":"Jarkovský",
+			"team":5
+			},
+		
+	  	{
+			"player_id":12,
+			"number":20,
+			"name":"Jaromír",
+			"surname":"Gerchan",
+			"team":5
+			},
+		
+	  	{
+			"player_id":13,
+			"number":15,
+			"name":"Vladimír",
+			"surname":"Jarkovský",
+			"team":5
+			},
+		
+	  	{
+			"player_id":14,
+			"number":25,
+			"name":"Vladimír",
+			"surname":"Strejček",
+			"team":5
+			},
+		
+	  	{
+			"player_id":15,
+			"number":15,
+			"name":"Cyril",
+			"surname":"Jarkovský",
+			"team":5
+			},
+		
+	  	{
+			"player_id":16,
+			"number":23,
+			"name":"Petr",
+			"surname":"Lessy",
+			"team":6
+			},
+		
+	  	{
+			"player_id":17,
+			"number":20,
+			"name":"Pavel",
+			"surname":"Sobota",
+			"team":6
+			},
+		
+	  	{
+			"player_id":18,
+			"number":4,
+			"name":"Václav",
+			"surname":"Vomáčka",
+			"team":6
+			},
+		
+	  	{
+			"player_id":19,
+			"number":37,
+			"name":"Matěj",
+			"surname":"Hašek",
+			"team":6
+			},
+		
+	  	{
+			"player_id":20,
+			"number":70,
+			"name":"Milan",
+			"surname":"Parléř",
+			"team":6
+			},
+		
+	  	{
+			"player_id":21,
+			"number":52,
+			"name":"Jaromír",
+			"surname":"Lessy",
+			"team":6
+			},
+		
+	  	{
+			"player_id":22,
+			"number":21,
+			"name":"Pepa",
+			"surname":"Lessy",
+			"team":6
+			},
+		
+	  	{
+			"player_id":23,
+			"number":6,
+			"name":"Vladimír",
+			"surname":"Payne",
+			"team":7
+			},
+		
+	  	{
+			"player_id":24,
+			"number":81,
+			"name":"Cyril",
+			"surname":"Pilát",
+			"team":7
+			},
+		
+	  	{
+			"player_id":25,
+			"number":37,
+			"name":"Milan",
+			"surname":"Vondrka",
+			"team":7
+			},
+		
+	  	{
+			"player_id":26,
+			"number":38,
+			"name":"Pavel",
+			"surname":"Gerchan",
+			"team":7
+			},
+		
+	  	{
+			"player_id":27,
+			"number":94,
+			"name":"Petr",
+			"surname":"Hašek",
+			"team":7
+			},
+		
+	  	{
+			"player_id":28,
+			"number":28,
+			"name":"František",
+			"surname":"Vraštil",
+			"team":7
+			},
+		
+	  	{
+			"player_id":29,
+			"number":26,
+			"name":"Matěj",
+			"surname":"Vomáčka",
+			"team":7
+			},
+		
+	  	{
+			"player_id":30,
+			"number":97,
+			"name":"Cyril",
+			"surname":"Vraštil",
+			"team":7
+			},
+		
+	  	{
+			"player_id":31,
+			"number":87,
+			"name":"Pepa",
+			"surname":"Jarkovský",
+			"team":8
+			},
+		
+	  	{
+			"player_id":32,
+			"number":17,
+			"name":"Petr",
+			"surname":"Jarkovský",
+			"team":8
+			},
+		
+	  	{
+			"player_id":33,
+			"number":73,
+			"name":"Jiří",
+			"surname":"Vomáčka",
+			"team":8
+			},
+		
+	  	{
+			"player_id":34,
+			"number":94,
+			"name":"Bartoloměj",
+			"surname":"Lessy",
+			"team":8
+			},
+		
+	  	{
+			"player_id":35,
+			"number":67,
+			"name":"Jiří",
+			"surname":"Gerchan",
+			"team":8
+			},
+		
+	  	{
+			"player_id":36,
+			"number":92,
+			"name":"Pavel",
+			"surname":"Vomáčka",
+			"team":8
+			},
+		
+	  	{
+			"player_id":37,
+			"number":34,
+			"name":"Pepa",
+			"surname":"Gerchan",
+			"team":8
+			},
+		
+	  	{
+			"player_id":38,
+			"number":82,
+			"name":"Bartoloměj",
+			"surname":"Sobota",
+			"team":8
+			},
+		
+	  	{
+			"player_id":39,
+			"number":26,
+			"name":"Pavel",
+			"surname":"Parléř",
+			"team":9
+			},
+		
+	  	{
+			"player_id":40,
+			"number":91,
+			"name":"Dominik",
+			"surname":"Gerchan",
+			"team":9
+			},
+		
+	  	{
+			"player_id":41,
+			"number":15,
+			"name":"Pavel",
+			"surname":"Vomáčka",
+			"team":9
+			},
+		
+	  	{
+			"player_id":42,
+			"number":1,
+			"name":"Pavel",
+			"surname":"Vraštil",
+			"team":9
+			},
+		
+	  	{
+			"player_id":43,
+			"number":67,
+			"name":"Cyril",
+			"surname":"Vraštil",
+			"team":9
+			},
+		
+	  	{
+			"player_id":44,
+			"number":66,
+			"name":"Jiří",
+			"surname":"Hašek",
+			"team":9
+			},
+		
+	  	{
+			"player_id":45,
+			"number":35,
+			"name":"Leonard",
+			"surname":"Parléř",
+			"team":9
+			},
+		
+	  	{
+			"player_id":46,
+			"number":63,
+			"name":"Václav",
+			"surname":"Vondrka",
+			"team":10
+			},
+		
+	  	{
+			"player_id":47,
+			"number":37,
+			"name":"Václav",
+			"surname":"Payne",
+			"team":10
+			},
+		
+	  	{
+			"player_id":48,
+			"number":38,
+			"name":"Jiří",
+			"surname":"Novák",
+			"team":10
+			},
+		
+	  	{
+			"player_id":49,
+			"number":87,
+			"name":"Václav",
+			"surname":"Sobota",
+			"team":10
+			},
+		
+	  	{
+			"player_id":50,
+			"number":1,
+			"name":"Pavel",
+			"surname":"Hašek",
+			"team":10
+			},
+		
+	  	{
+			"player_id":51,
+			"number":81,
+			"name":"František",
+			"surname":"Vondrka",
+			"team":10
+			},
+		
+	  	{
+			"player_id":52,
+			"number":39,
+			"name":"Matěj",
+			"surname":"Parléř",
+			"team":10
+			},
+		
+	  	{
+			"player_id":53,
+			"number":82,
+			"name":"Leonard",
+			"surname":"Vondrka",
+			"team":11
+			},
+		
+	  	{
+			"player_id":54,
+			"number":20,
+			"name":"Pepa",
+			"surname":"Parléř",
+			"team":11
+			},
+		
+	  	{
+			"player_id":55,
+			"number":90,
+			"name":"Milan",
+			"surname":"Vomáčka",
+			"team":11
+			},
+		
+	  	{
+			"player_id":56,
+			"number":82,
+			"name":"Pepa",
+			"surname":"Novák",
+			"team":11
+			},
+		
+	  	{
+			"player_id":57,
+			"number":20,
+			"name":"Dominik",
+			"surname":"Jarkovský",
+			"team":11
+			},
+		
+	  	{
+			"player_id":58,
+			"number":6,
+			"name":"Bartoloměj",
+			"surname":"Malina",
+			"team":11
+			},
+		
+	  	{
+			"player_id":59,
+			"number":63,
+			"name":"Matěj",
+			"surname":"Vraštil",
+			"team":11
+			},
+		
+	  	{
+			"player_id":60,
+			"number":59,
+			"name":"Václav",
+			"surname":"Jarkovský",
+			"team":11
+			},
+		
+	  	{
+			"player_id":61,
+			"number":51,
+			"name":"Vladimír",
+			"surname":"Malina",
+			"team":11
+			},
+		
+	  	{
+			"player_id":62,
+			"number":43,
+			"name":"Bartoloměj",
+			"surname":"Lessy",
+			"team":12
+			},
+		
+	  	{
+			"player_id":63,
+			"number":30,
+			"name":"Jiří",
+			"surname":"Sobota",
+			"team":12
+			},
+		
+	  	{
+			"player_id":64,
+			"number":91,
+			"name":"Václav",
+			"surname":"Strejček",
+			"team":12
+			},
+		
+	  	{
+			"player_id":65,
+			"number":71,
+			"name":"Dominik",
+			"surname":"Vomáčka",
+			"team":12
+			},
+		
+	  	{
+			"player_id":66,
+			"number":35,
+			"name":"Dominik",
+			"surname":"Strejček",
+			"team":12
+			},
+		
+	  	{
+			"player_id":67,
+			"number":15,
+			"name":"Petr",
+			"surname":"Vondrka",
+			"team":12
+			},
+		
+	  	{
+			"player_id":68,
+			"number":8,
+			"name":"Dominik",
+			"surname":"Vraštil",
+			"team":12
+			},
+		]
