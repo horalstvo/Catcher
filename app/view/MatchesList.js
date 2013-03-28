@@ -11,6 +11,14 @@ Ext.define("catcher.view.MatchesList", {
 
 		store : "Matches",
 		itemTpl : "{home_name_full} vs. {away_name_full} ({score_home}:{score_away}) - {time:date('G:i')}",
-		onItemDisclosure : true
-	}
+		onItemDisclosure : true,
+		listeners: {
+			painted: function(){
+				var store = Ext.getStore("Matches");
+				var session = Ext.getStore("Session").findRecord("uuid",Ext.device.Device.uuid);
+				store.clearFilter();
+				store.filter("tournament_id",session.get("tournament_id"));
+			}
+		}
+	},		
 });

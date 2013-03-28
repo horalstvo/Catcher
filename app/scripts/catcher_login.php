@@ -15,7 +15,7 @@ $vysledek = mysql_query("SELECT * FROM mod_catcher_tournaments WHERE id = '$tour
 
 if(mysql_num_rows($vysledek) == 1){
 	$data = mysql_fetch_array($vysledek);
-	echo '{"success":true, "tournament_id":"'.$data["name"].'", "tournament_name":"'.$data["name"].'"}';
+	echo '{"success":true, "tournament_id":"'.$data["id"].'", "tournament_name":"'.$data["name"].'"}';
 }else{
 	echo '{"success":false,"message":"Chybné heslo"}';
 }
