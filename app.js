@@ -12,10 +12,10 @@ Ext.application({
         'Ext.MessageBox'
     ],
 
-    views: ['Main',"Login","About","Tournament","MatchesNavigation","TeamList"],
-    stores : ["Tournaments","Matches","Session","Teams","Players","Evidence"],
-    models: ["Tournament","Match","Session","Team","Player","Evidence"],
-    controllers: ["Login","Evidence", "MatchController"],
+    views : [ "Main", "Login", "About", "Tournament", "MatchesNavigation", "TeamList" ],
+    stores : [ "Tournaments", "Matches", "Session", "Teams", "Players", "Evidence", "Points" ],
+    models : [ "Tournament", "Match", "Session", "Team", "Player", "Evidence", "Point" ],
+    controllers : [ "Login", "Evidence", "MatchController" ],
 
     icon: {
         '57': 'resources/icons/Icon.png',

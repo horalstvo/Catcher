@@ -49,6 +49,7 @@ Ext.define('catcher.controller.Login', {
 					uuid: device,
 					tournament_id: response.tournament_id,
 					tournament_name: response.tournament_name,
+					match_id : 0,
 					timestamp_logged: Date.now()
 				};							
 				store.add(device,save);
