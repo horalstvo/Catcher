@@ -16,11 +16,11 @@
 $data["id"] = 15;
 $data["name"] = "Prague Four League (1/2013)";
 
-if(mysql_num_rows($vysledek) == 1){
-	$data = mysql_fetch_array($vysledek);
+// if(mysql_num_rows($vysledek) == 1){
+// 	$data = mysql_fetch_array($vysledek);
 	echo '{"success":true, "tournament_id":"'.$data["id"].'", "tournament_name":"'.$data["name"].'"}';
-}else{
-	echo '{"success":false,"message":"chybné heslo"}';
-}
+// }else{
+// 	echo '{"success":false,"message":"chybné heslo"}';
+// }
 
 ?>
