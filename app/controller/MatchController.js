@@ -137,6 +137,7 @@ function fullName(player) {
 
 function showScore(matchId, teamId, navigation) {
     var points = Ext.getStore("Points");
+    points.clearFilter();
     points.filter("match_id", matchId);
     points.filter("team_id", teamId);
 
