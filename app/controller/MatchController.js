@@ -123,7 +123,7 @@ Ext.define('catcher.controller.MatchController', {
         var match = Ext.getStore("Matches").findRecord("match_id", matchId, false, false, false, true).data;
         this.getMatchesNavigation().push({
             xtype : "scoreList",
-            data : getTeamScore(match.match_id, match.home_id)
+            data : getTeamScore(match.match_id, match.away_id)
         });
     },
 
