@@ -5,7 +5,8 @@ Ext.define('catcher.controller.MatchController', {
         refs : {
             matchesNavigation : "matchesNavigation",
             matchDetail : "matchDetail",
-            addPointDetail : "addPointDetail"
+            addPointDetail : "addPointDetail",
+            editPointDetail : "editPointDetail"
         },
         control : {
             "matchesList" : {
@@ -22,6 +23,12 @@ Ext.define('catcher.controller.MatchController', {
             },
             "matchDetail button[name=scoreAway]" : {
                 tap : "showScoreAway"
+            },
+            "scoreList" : {
+                disclose : "showEditPoint"
+            },
+            "editPointDetail button[name=editConfirm]" : {
+                tap : "updatePoint"
             },
         }
     },
@@ -60,21 +67,7 @@ Ext.define('catcher.controller.MatchController', {
         });
 
         var addPointDetail = this.getAddPointDetail();
-
-        var players = Ext.getStore("Players");
-        players.filter("team", scoringPlayer.team);
-
-        var coPlayers = new Array();
-
-        players.each(function(item, index, length) {
-            var player = item.data;
-            coPlayers.push({
-                text : fullName(player),
-                value : player.player_id
-            });
-        });
-        players.clearFilter();
-
+        var coPlayers = getCoPlayers(scoringPlayer.team);
         addPointDetail.query("selectfield[name=assistPlayer]")[0].setOptions(coPlayers);
     },
 
@@ -109,7 +102,7 @@ Ext.define('catcher.controller.MatchController', {
         var homePlayers = Ext.create("catcher.store.Players");
         homePlayers.filter("team", match.home_id);
 
-        var awayPlayers = Ext.create("catcher.store.Players"); // TODO Burkert: budou s create fungovat zmeny v hracich?
+        var awayPlayers = Ext.create("catcher.store.Players");
         awayPlayers.filter("team", match.away_id);
 
         matchDetail.query("matchPlayerList[name=homeTeam]")[0].setStore(homePlayers);
@@ -117,17 +110,64 @@ Ext.define('catcher.controller.MatchController', {
     },
 
     showScoreHome : function() {
-        var session = Ext.getStore("Session").findRecord("uuid", Ext.device.Device.uuid);
-        var matchId = session.match_id;
+        var matchId = Ext.getStore("Session").findRecord("uuid", Ext.device.Device.uuid).match_id;
         var match = Ext.getStore("Matches").findRecord("match_id", matchId, false, false, false, true).data;
-        showScore(match.match_id, match.home_id, this.getMatchesNavigation());
+        this.getMatchesNavigation().push({
+            xtype : "scoreList",
+            data : getTeamScore(match.match_id, match.home_id)
+        });
     },
 
     showScoreAway : function() {
-        var session = Ext.getStore("Session").findRecord("uuid", Ext.device.Device.uuid);
-        var matchId = session.match_id;
+        var matchId = Ext.getStore("Session").findRecord("uuid", Ext.device.Device.uuid).match_id;
         var match = Ext.getStore("Matches").findRecord("match_id", matchId, false, false, false, true).data;
-        showScore(match.match_id, match.away_id, this.getMatchesNavigation());
+        this.getMatchesNavigation().push({
+            xtype : "scoreList",
+            data : getTeamScore(match.match_id, match.home_id)
+        });
+    },
+
+    showEditPoint : function(list, record) {
+        var point = record.data.point.data;
+        this.getMatchesNavigation().push({
+            xtype : "editPointDetail",
+            data : point
+        });
+
+        var coPlayers = getCoPlayers(point.team_id);
+
+        var editPointDetail = this.getEditPointDetail();
+
+        editPointDetail.query("selectfield[name=scoringPlayer]")[0].setOptions(coPlayers).setValue(point.player_id);
+        editPointDetail.query("selectfield[name=assistPlayer]")[0].setOptions(coPlayers).setValue(point.assist_player_id);
+        editPointDetail.query("hiddenfield[name=pointId]")[0].setValue(point.point_id);
+    },
+
+    updatePoint : function() {
+        var values = this.getEditPointDetail().getValues();
+
+        var point = Ext.getStore("Points").findRecord("point_id", values.pointId);
+        point.set("player_id", values.scoringPlayer);
+        point.set("assist_player_id", values.assistPlayer);
+        this.getMatchesNavigation().pop();
+    },
+
+    deletePoint : function() {
+        var values = this.getEditPointDetail().getValues();
+        var store = Ext.getStore("Points");
+        store.remove(store.findRecord("point_id", values.pointId));
+
+        var matchId = Ext.getStore("Session").findRecord("uuid", Ext.device.Device.uuid).match_id;
+        var match = Ext.getStore("Matches").findRecord("match_id", matchId, false, false, false, true).data;
+        
+        var scoringPlayer = Ext.getStore("Players").findRecord("player_id", values.scoringPlayer).data;
+
+        if (match.home_id == scoringPlayer.team) {
+            match.score_home--;
+        } else {
+            match.score_away--;
+        }
+        this.getMatchesNavigation().pop();
     },
 });
 
@@ -135,7 +175,7 @@ function fullName(player) {
     return player.name + " " + player.surname + " #" + player.number;
 };
 
-function showScore(matchId, teamId, navigation) {
+function getTeamScore(matchId, teamId) {
     var points = Ext.getStore("Points");
     points.clearFilter();
     points.filter("match_id", matchId);
@@ -154,12 +194,29 @@ function showScore(matchId, teamId, navigation) {
         pointsToDisplay.push({
             scoringPlayer : fullName(scoringPlayer.data),
             assistPlayer : fullName(assistPlayer.data),
-            pointId : item.get("point_id")
+            point : item,
         });
     });
-
-    navigation.push({
-        xtype : "scoreList",
-        data : pointsToDisplay
-    });
+    return pointsToDisplay;
 };
+
+function getCoPlayers(team) {
+    var players = Ext.getStore("Players");
+    players.clearFilter();
+    players.filter("team", team);
+
+    var coPlayers = new Array();
+
+    players.each(function(item, index, length) {
+        var player = item.data;
+        coPlayers.push(createPlayerOption(player));
+    });
+    return coPlayers;
+};
+
+function createPlayerOption(player) {
+    return {
+        text : fullName(player),
+        value : player.player_id
+    };
+}
