@@ -6,7 +6,8 @@ Ext.define('catcher.controller.MatchController', {
             matchesNavigation : "matchesNavigation",
             matchDetail : "matchDetail",
             addPointDetail : "addPointDetail",
-            editPointDetail : "editPointDetail"
+            editPointDetail : "editPointDetail",
+            scoreList : "scoreList"
         },
         control : {
             "matchesList" : {
@@ -40,19 +41,7 @@ Ext.define('catcher.controller.MatchController', {
             title : match.home_name_short + " x " + match.away_name_short,
             data : match
         });
-        var matchDetail = this.getMatchDetail();
-        matchDetail.query("button[name=scoreHome]")[0].setText(new String(match.score_home));
-        matchDetail.query("button[name=scoreAway]")[0].setText(new String(match.score_away));
-
-        var homePlayers = Ext.create("catcher.store.Players");
-        homePlayers.filter("team", match.home_id);
-
-        var awayPlayers = Ext.create("catcher.store.Players"); // TODO Burkert: budou s create fungovat zmeny v hracich?
-        awayPlayers.filter("team", match.away_id);
-
-        matchDetail.query("matchPlayerList[name=homeTeam]")[0].setStore(homePlayers);
-        matchDetail.query("matchPlayerList[name=awayTeam]")[0].setStore(awayPlayers);
-
+        fillMatchDetailContent(this.getMatchDetail(), match);
         var session = Ext.getStore("Session").findRecord("uuid", Ext.device.Device.uuid);
         session.match_id = match.match_id;
     },
@@ -79,8 +68,13 @@ Ext.define('catcher.controller.MatchController', {
 
         var assistPlayerId = this.getAddPointDetail().query("selectfield[name=assistPlayer]")[0].getValue();
 
+        var points = Ext.getStore("Points");
+        var new_id = points.getAt(points.getCount() - 1);
+        new_id = new_id.get("point_id") + 1;
+
         // Add the point and raise score.
-        Ext.getStore("Points").add({
+        points.add({
+            point_id : new_id,
             team_id : scoringPlayer.team,
             player_id : scoringPlayer.player_id,
             match_id : matchId,
@@ -95,18 +89,7 @@ Ext.define('catcher.controller.MatchController', {
         }
 
         this.getMatchesNavigation().pop(); // Back to the match overview (update scores).
-        var matchDetail = this.getMatchDetail();
-        matchDetail.query("button[name=scoreHome]")[0].setText(new String(match.score_home));
-        matchDetail.query("button[name=scoreAway]")[0].setText(new String(match.score_away));
-
-        var homePlayers = Ext.create("catcher.store.Players");
-        homePlayers.filter("team", match.home_id);
-
-        var awayPlayers = Ext.create("catcher.store.Players");
-        awayPlayers.filter("team", match.away_id);
-
-        matchDetail.query("matchPlayerList[name=homeTeam]")[0].setStore(homePlayers);
-        matchDetail.query("matchPlayerList[name=awayTeam]")[0].setStore(awayPlayers);
+        fillMatchDetailContent(this.getMatchDetail(), match);
     },
 
     showScoreHome : function() {
@@ -114,7 +97,7 @@ Ext.define('catcher.controller.MatchController', {
         var match = Ext.getStore("Matches").findRecord("match_id", matchId, false, false, false, true).data;
         this.getMatchesNavigation().push({
             xtype : "scoreList",
-            data : getTeamScore(match.match_id, match.home_id)
+            store : getTeamScore(match.match_id, match.home_id)
         });
     },
 
@@ -123,15 +106,16 @@ Ext.define('catcher.controller.MatchController', {
         var match = Ext.getStore("Matches").findRecord("match_id", matchId, false, false, false, true).data;
         this.getMatchesNavigation().push({
             xtype : "scoreList",
-            data : getTeamScore(match.match_id, match.away_id)
+            store : getTeamScore(match.match_id, match.away_id)
         });
     },
 
     showEditPoint : function(list, record) {
-        var point = record.data.point.data;
+        var point = Ext.getStore("Points").findRecord("point_id", record.data.pointId).data;
+
         this.getMatchesNavigation().push({
             xtype : "editPointDetail",
-            data : point
+            data : record.data
         });
 
         var coPlayers = getCoPlayers(point.team_id);
@@ -149,7 +133,12 @@ Ext.define('catcher.controller.MatchController', {
         var point = Ext.getStore("Points").findRecord("point_id", values.pointId);
         point.set("player_id", values.scoringPlayer);
         point.set("assist_player_id", values.assistPlayer);
+
+        // Back and reload.
         this.getMatchesNavigation().pop();
+        var matchId = Ext.getStore("Session").findRecord("uuid", Ext.device.Device.uuid).match_id;
+        var scoringPlayer = Ext.getStore("Players").findRecord("player_id", values.scoringPlayer).data;
+        this.getScoreList().setStore(getTeamScore(matchId, scoringPlayer.team));
     },
 
     deletePoint : function() {
@@ -159,7 +148,7 @@ Ext.define('catcher.controller.MatchController', {
 
         var matchId = Ext.getStore("Session").findRecord("uuid", Ext.device.Device.uuid).match_id;
         var match = Ext.getStore("Matches").findRecord("match_id", matchId, false, false, false, true).data;
-        
+
         var scoringPlayer = Ext.getStore("Players").findRecord("player_id", values.scoringPlayer).data;
 
         if (match.home_id == scoringPlayer.team) {
@@ -167,13 +156,31 @@ Ext.define('catcher.controller.MatchController', {
         } else {
             match.score_away--;
         }
+
+        // Back and reload.
         this.getMatchesNavigation().pop();
+        this.getScoreList().setStore(getTeamScore(matchId, scoringPlayer.team));
+        fillMatchDetailContent(this.getMatchDetail(), match);
     },
 });
 
+function fillMatchDetailContent(matchDetail, match) {
+    matchDetail.query("button[name=scoreHome]")[0].setText(new String(match.score_home));
+    matchDetail.query("button[name=scoreAway]")[0].setText(new String(match.score_away));
+
+    var homePlayers = Ext.create("catcher.store.Players");
+    homePlayers.filter("team", match.home_id);
+
+    var awayPlayers = Ext.create("catcher.store.Players");
+    awayPlayers.filter("team", match.away_id);
+
+    matchDetail.query("matchPlayerList[name=homeTeam]")[0].setStore(homePlayers);
+    matchDetail.query("matchPlayerList[name=awayTeam]")[0].setStore(awayPlayers);
+}
+
 function fullName(player) {
     return player.name + " " + player.surname + " #" + player.number;
-};
+}
 
 function getTeamScore(matchId, teamId) {
     var points = Ext.getStore("Points");
@@ -194,11 +201,31 @@ function getTeamScore(matchId, teamId) {
         pointsToDisplay.push({
             scoringPlayer : fullName(scoringPlayer.data),
             assistPlayer : fullName(assistPlayer.data),
-            point : item,
+            pointId : item.get("point_id"),
         });
     });
-    return pointsToDisplay;
-};
+
+    Ext.define("PointView", {
+        extend : "Ext.data.Model",
+        config : {
+            fields : [ {
+                name : 'scoringPlayer',
+                type : 'string'
+            }, {
+                name : 'assistPlayer',
+                type : 'string'
+            }, {
+                name : 'pointId',
+                type : 'int'
+            } ]
+        }
+    });
+
+    return new Ext.data.Store({
+        model : 'PointView',
+        data : pointsToDisplay
+    });
+}
 
 function getCoPlayers(team) {
     var players = Ext.getStore("Players");
@@ -212,7 +239,7 @@ function getCoPlayers(team) {
         coPlayers.push(createPlayerOption(player));
     });
     return coPlayers;
-};
+}
 
 function createPlayerOption(player) {
     return {
