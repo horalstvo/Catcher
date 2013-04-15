@@ -13,8 +13,8 @@
 // zatím se s heslem nebudeme párat, přihlásíme se kamkoliv a kdykoliv 
 //  and password = '$password'
 
-$data["id"] = 15;
-$data["name"] = "Prague Four League (1/2013)";
+$data["id"] = 42;
+$data["name"] = "1. kvalifikace";
 
 // if(mysql_num_rows($vysledek) == 1){
 // 	$data = mysql_fetch_array($vysledek);
