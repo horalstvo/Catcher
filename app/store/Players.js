@@ -1,18 +1,17 @@
 Ext.define('catcher.store.Players', {
     extend : 'Ext.data.Store',
-    requires: ['Ext.data.proxy.JsonP'],
+    requires: ["Ext.data.proxy.JsonP"],
     config : {
         model : 'catcher.model.Player',
         storeId : 'Players',
         proxy : {
             type : 'jsonp',
-            // url : 'app/data/data_hraci.jsn',
-            url : 'http://frisbee.cz/catcher/app/data/data_hraci.jsn',
-            reader : {
-                type : 'json'
-            }
+            url : 'http://www.frisbee.cz/catcher/app/scripts/data_loader.php?store=players',            
         },
         sorters : "surname",
+        // grouper: function(record){
+        // return record.get("player_surname")[0];
+        // },
         autoLoad : true
     }
 });
