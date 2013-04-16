@@ -17,7 +17,8 @@ if(!empty($store)){
 	$cols["tournaments"] = array("tournament_id"=>"id","tournament_name"=>"name");
 	$cols["teams"] = array("team_id"=>"id","name_short"=>"name_short","name_full"=>"name_full");
 	$cols["players"] = array("player_id"=>"id","name"=>"name","surname"=>"surname","number"=>"number","team"=>"team");
-	$cols["matches"] = array("match_id"=>"id","tournament_id"=>"tournament_id","home_id"=>"home_id","home_name_full"=>"home_name_full","home_name_short"=>"home_name_short","away_name_full"=>"away_name_full","away_name_short"=>"away_name_short","away_id"=>"away_id","score_home"=>"score_home","score_away"=>"score_away","spirit_home"=>"spirit_home","spirit_away"=>"spirit_away","field"=>"field","time"=>"time");	
+	$cols["matches"] = array("match_id"=>"id","tournament_id"=>"tournament_id","home_id"=>"home_id","home_name_full"=>"home_name_full","home_name_short"=>"home_name_short","away_name_full"=>"away_name_full","away_name_short"=>"away_name_short","away_id"=>"away_id","score_home"=>"score_home","score_away"=>"score_away","spirit_home"=>"spirit_home","spirit_away"=>"spirit_away","field"=>"field","time"=>"time");
+	$cols["points"] = array("point_id"=>"id","team_id"=>"team_id","player_id"=>"player_id","assists_player_id"=>"assists_player_id","match_id"=>"match_id");	
 
 	$vysledek = mysql_query("SELECT * FROM mod_catcher_$store");
 	while($data = mysql_fetch_array($vysledek)){
@@ -26,8 +27,8 @@ if(!empty($store)){
 			$away = mysql_fetch_array(mysql_query("SELECT * FROM mod_catcher_teams WHERE id = $data[away_id]"));
 			$data["home_name_short"] = $home["name_short"];
 			$data["home_name_full"] = $home["name_full"];
-			$data["away_name_short"] = $home["name_short"];
-			$data["away_name_full"] = $home["name_full"];
+			$data["away_name_short"] = $away["name_short"];
+			$data["away_name_full"] = $away["name_full"];
 		}
 		foreach($cols[$store] as $index=>$value){
     	$data[$value] = convert($data[$value]);
