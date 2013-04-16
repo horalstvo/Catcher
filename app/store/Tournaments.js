@@ -1,15 +1,13 @@
 Ext.define('catcher.store.Tournaments', {
     extend : 'Ext.data.Store',
+    requires: ['Ext.data.proxy.JsonP'],
     config : {
         model : 'catcher.model.Tournament',
         storeId : 'Tournaments',
         proxy : {
-            type : 'ajax',
+            type : 'jsonp',
             // url: 'app/data/data_turnaje.jsn',
-            url : 'frisbee.cz/catcher/app/data/data_turnaje.jsn',
-            reader : {
-                type : 'json'
-            }
+            url : 'http://frisbee.cz/catcher/app/data/data_turnaje.php',
         },
         autoLoad : true
     }

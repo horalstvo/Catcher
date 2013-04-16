@@ -1,12 +1,13 @@
 Ext.define('catcher.store.Matches', {
     extend : 'Ext.data.Store',
+    requires: ['Ext.data.proxy.JsonP'],
     config : {
         model : 'catcher.model.Match',
         storeId : 'Matches',
         proxy : {
-            type : 'ajax',
+            type : 'jsonp',
             // url : 'app/data/data_zapasy.jsn',
-            url : 'frisbee.cz/catcher/app/data/data_zapasy.jsn',
+            url : 'http://frisbee.cz/catcher/app/data/data_zapasy.jsn',
             reader : {
                 type : 'json'
             }

@@ -1,12 +1,13 @@
 Ext.define('catcher.store.Teams', {
     extend : 'Ext.data.Store',
+    requires: ['Ext.data.proxy.JsonP'],
     config : {
         model : 'catcher.model.Team',
         storeId : 'Teams',
         proxy : {
-            type : 'ajax',
+            type : 'jsonp',
             // url : 'app/data/data_tymy.jsn',
-            url : 'frisbee.cz/catcher/app/data/data_tymy.jsn',
+            url : 'http://frisbee.cz/catcher/app/data/data_tymy.jsn',
             reader : {
                 type : 'json'
             }
