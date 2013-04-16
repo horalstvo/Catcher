@@ -5,7 +5,8 @@ Ext.define('catcher.store.Players', {
         storeId : 'Players',
         proxy : {
             type : 'ajax',
-            url : 'app/data/data_hraci.jsn',
+            // url : 'app/data/data_hraci.jsn',
+            url : 'frisbee.cz/catcher/app/data/data_hraci.jsn',
             reader : {
                 type : 'json'
             }

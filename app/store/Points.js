@@ -5,7 +5,8 @@ Ext.define('catcher.store.Points', {
         storeId : 'Points',
         proxy : {
             type : 'ajax',
-            url : 'app/data/data_body.jsn',
+            url : 'frisbee.cz/catcher/app/data/data_body.jsn',
+            // url : 'app/data/data_body.jsn',
             reader : {
                 type : 'json'
             }
