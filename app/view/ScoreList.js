@@ -4,7 +4,7 @@ Ext.define("catcher.view.ScoreList", {
     requires : [ "catcher.view.EditPointDetail" ],
 
     config : {
-        title : "Skóre týmu",
+        title : "Skóre ",
         iconCls : "time",
         styleHtmlContent : true,
         itemTpl : "{scoringPlayer} ({assistPlayer})",

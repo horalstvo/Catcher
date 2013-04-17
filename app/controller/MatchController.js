@@ -103,6 +103,7 @@ Ext.define('catcher.controller.MatchController', {
         var match = Ext.getStore("Matches").findRecord("match_id", matchId, false, false, false, true).data;
         this.getMatchesNavigation().push({
             xtype : "scoreList",
+            title : "Skóre " + match.home_name_short,
             store : getTeamScore(match.match_id, match.home_id)
         });
     },
@@ -112,6 +113,7 @@ Ext.define('catcher.controller.MatchController', {
         var match = Ext.getStore("Matches").findRecord("match_id", matchId, false, false, false, true).data;
         this.getMatchesNavigation().push({
             xtype : "scoreList",
+            title : "Skóre " + match.away_name_short,
             store : getTeamScore(match.match_id, match.away_id)
         });
     },
@@ -145,6 +147,7 @@ Ext.define('catcher.controller.MatchController', {
         var matchId = Ext.getStore("Session").findRecord("uuid", Ext.device.Device.uuid).match_id;
         var scoringPlayer = Ext.getStore("Players").findRecord("player_id", values.scoringPlayer).data;
         this.getScoreList().setStore(getTeamScore(matchId, scoringPlayer.team));
+        this.getScoreList().deselectAll();
     },
 
     deletePoint : function() {
@@ -166,6 +169,7 @@ Ext.define('catcher.controller.MatchController', {
         // Back and reload.
         this.getMatchesNavigation().pop();
         this.getScoreList().setStore(getTeamScore(matchId, scoringPlayer.team));
+        this.getScoreList().deselectAll();
         fillMatchDetailContent(this.getMatchDetail(), match);
     },
 });
@@ -180,8 +184,13 @@ function fillMatchDetailContent(matchDetail, match) {
     var awayPlayers = Ext.create("catcher.store.Players");
     awayPlayers.filter("team", match.away_id);
 
-    matchDetail.query("matchPlayerList[name=homeTeam]")[0].setStore(homePlayers);
-    matchDetail.query("matchPlayerList[name=awayTeam]")[0].setStore(awayPlayers);
+    var homePlayerList = matchDetail.query("matchPlayerList[name=homeTeam]")[0];
+    homePlayerList.setStore(homePlayers);
+    homePlayerList.deselectAll();
+    
+    var awayPlayerList = matchDetail.query("matchPlayerList[name=awayTeam]")[0];
+    awayPlayerList.setStore(awayPlayers);
+    awayPlayerList.deselectAll();
 }
 
 function fullName(player) {
