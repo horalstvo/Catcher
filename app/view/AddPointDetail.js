@@ -21,7 +21,8 @@ Ext.define("catcher.view.AddPointDetail", {
         }, {
             xtype : "button",
             text : "Uložit",
-            ui : "confirm"
+            ui : "confirm",
+            height : "60px"
         } ]
     },
 });

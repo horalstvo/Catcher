@@ -9,7 +9,7 @@ Ext.define("catcher.view.MatchPlayerList", {
         items : [],
         store : "Players",
         itemTpl : "{number} {name} {surname}",
-        style : 'font-size : 1.4em',
+        style : 'font-size : 2em',
         onItemDisclosure : true,
     },
 

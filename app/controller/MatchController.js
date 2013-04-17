@@ -54,7 +54,7 @@ Ext.define('catcher.controller.MatchController', {
 
         this.getMatchesNavigation().push({
             xtype : "addPointDetail",
-            title : "Skóroval hráč " + fullName(scoringPlayer),
+            title : "Score " + fullName(scoringPlayer),
             data : scoringPlayer
         });
 
