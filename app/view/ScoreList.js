@@ -8,6 +8,7 @@ Ext.define("catcher.view.ScoreList", {
         iconCls : "time",
         styleHtmlContent : true,
         itemTpl : "{scoringPlayer} ({assistPlayer})",
+        style : 'font-size : 1.4em',
         onItemDisclosure : true,
     },
 });

@@ -6,6 +6,7 @@ Ext.define("catcher.view.MatchesList", {
         title : "Zápasy",
         iconCls : "time",
         styleHtmlContent : true,
+        style : 'font-size : 1.4em',
 
         items : [],
 

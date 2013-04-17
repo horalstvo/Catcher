@@ -7,7 +7,6 @@ Ext.define("catcher.view.Login", {
     config : {
         title : "Přihlášení",
         iconCls : "user",
-        url : "http://www.frisbee.cz/catcher/app/scripts/catcher_login.php",
 
         items : [ {
             xtype : "fieldset",
@@ -29,7 +28,7 @@ Ext.define("catcher.view.Login", {
         }, {
             xtype : "button",
             text : "Přihlásit",
-            ui : "confirm"
+            ui : "confirm",
         } ]
     },
 
@@ -37,7 +36,7 @@ Ext.define("catcher.view.Login", {
     initialize : function() {
         var options = new Array();
         var store = Ext.getStore("Tournaments").load(function(records) {
-            store.each(function(radek) {            	
+            store.each(function(radek) {
                 options.push({
                     text : radek.get("tournament_name"),
                     value : radek.get("tournament_id")

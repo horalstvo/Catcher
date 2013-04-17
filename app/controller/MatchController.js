@@ -7,14 +7,16 @@ Ext.define('catcher.controller.MatchController', {
             matchDetail : "matchDetail",
             addPointDetail : "addPointDetail",
             editPointDetail : "editPointDetail",
-            scoreList : "scoreList"
+            scoreList : "scoreList",
         },
         control : {
             "matchesList" : {
-                disclose : "showMatchDetail"
+                disclose : "showMatchDetail", 
+                select : "showMatchDetail"
             },
             "matchPlayerList" : {
-                disclose : "showAddPoint"
+                disclose : "showAddPoint", 
+                select : "showAddPoint"
             },
             "addPointDetail button" : {
                 tap : "addPoint"
@@ -26,7 +28,8 @@ Ext.define('catcher.controller.MatchController', {
                 tap : "showScoreAway"
             },
             "scoreList" : {
-                disclose : "showEditPoint"
+                disclose : "showEditPoint", 
+                select : "showEditPoint"
             },
             "editPointDetail button[name=editConfirm]" : {
                 tap : "updatePoint"
@@ -69,8 +72,11 @@ Ext.define('catcher.controller.MatchController', {
         var assistPlayerId = this.getAddPointDetail().query("selectfield[name=assistPlayer]")[0].getValue();
 
         var points = Ext.getStore("Points");
-        var new_id = points.getAt(points.getCount() - 1);
-        new_id = new_id.get("point_id") + 1;
+        var new_id = 1;
+        if (points.getCount() > 0) {
+            new_id = points.getAt(points.getCount() - 1).get("point_id");
+            new_id = new_id + 1;
+        }
 
         // Add the point and raise score.
         points.add({
