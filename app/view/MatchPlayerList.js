@@ -1,12 +1,16 @@
 Ext.define("catcher.view.MatchPlayerList", {
     extend : "Ext.List",
     xtype : "matchPlayerList",
+    requires : [ "Ext.Label" ],
 
     config : {
-        title : "Team_name",
         styleHtmlContent : true,
         scrollVertical : true,
-        items : [],
+        items : [ {
+            xtype : "label",
+            docked : "top",
+            name : "teamName"
+        } ],
         store : "Players",
         itemTpl : "{number} {name} {surname}",
         style : 'font-size : 2em',

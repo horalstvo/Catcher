@@ -15,11 +15,13 @@ Ext.define("catcher.view.EditPointDetail", {
                 xtype : "selectfield",
                 label : "Skórující",
                 name : "scoringPlayer",
+                style : "font-size: 1.4em",
                 options : []
             }, {
                 xtype : "selectfield",
                 label : "Asistující",
                 name : "assistPlayer",
+                style : "font-size: 1.4em",
                 options : []
             }, {
                 xtype : "hiddenfield",

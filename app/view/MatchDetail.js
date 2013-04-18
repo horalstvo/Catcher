@@ -11,7 +11,7 @@ Ext.define("catcher.view.MatchDetail", {
         items : [ {
             xtype : "segmentedbutton",
             styleHtmlContent : true,
-            height : "80px",
+            style : "font-size: 3em",
             layout : {
                 align : "stretchmax",
                 pack : "center",

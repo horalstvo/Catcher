@@ -14,6 +14,10 @@ Ext.define('catcher.model.Point', {
         }, {
             name : 'match_id',
             type : 'int'
-        }, ]
+        }, {
+            name : 'time',
+            type : 'date',
+            dateFormat : "timestamp"
+        } ]
     },
 });

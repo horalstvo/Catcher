@@ -11,11 +11,11 @@ Ext.define('catcher.controller.MatchController', {
         },
         control : {
             "matchesList" : {
-                disclose : "showMatchDetail", 
+                disclose : "showMatchDetail",
                 select : "showMatchDetail"
             },
             "matchPlayerList" : {
-                disclose : "showAddPoint", 
+                disclose : "showAddPoint",
                 select : "showAddPoint"
             },
             "addPointDetail button" : {
@@ -28,7 +28,7 @@ Ext.define('catcher.controller.MatchController', {
                 tap : "showScoreAway"
             },
             "scoreList" : {
-                disclose : "showEditPoint", 
+                disclose : "showEditPoint",
                 select : "showEditPoint"
             },
             "editPointDetail button[name=editConfirm]" : {
@@ -84,7 +84,8 @@ Ext.define('catcher.controller.MatchController', {
             team_id : scoringPlayer.team,
             player_id : scoringPlayer.player_id,
             match_id : matchId,
-            assist_player_id : assistPlayerId
+            assist_player_id : assistPlayerId,
+            time : Date.now()
         });
 
         var match = Ext.getStore("Matches").findRecord("match_id", matchId, false, false, false, true).data;
@@ -187,10 +188,13 @@ function fillMatchDetailContent(matchDetail, match) {
     var homePlayerList = matchDetail.query("matchPlayerList[name=homeTeam]")[0];
     homePlayerList.setStore(homePlayers);
     homePlayerList.deselectAll();
-    
+    homePlayerList.query("label[name=teamName]")[0].setHtml(match.home_name_full);
+
     var awayPlayerList = matchDetail.query("matchPlayerList[name=awayTeam]")[0];
     awayPlayerList.setStore(awayPlayers);
     awayPlayerList.deselectAll();
+    awayPlayerList.query("label[name=teamName]")[0].setHtml(match.away_name_full);
+    // awayPlayerList.query("titlebar[name=teamName]")[0].setTitle(match.away_name_full);
 }
 
 function fullName(player) {
