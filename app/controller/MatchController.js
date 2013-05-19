@@ -67,6 +67,7 @@ Ext.define('catcher.controller.MatchController', {
         var scoringPlayer = this.getAddPointDetail().getData();
 
         var session = Ext.getStore("Session").findRecord("uuid", Ext.device.Device.uuid);
+        var matches = Ext.getStore("Matches");
         var matchId = session.match_id;
 
         var assistPlayerId = this.getAddPointDetail().query("selectfield[name=assistPlayer]")[0].getValue();
@@ -85,15 +86,21 @@ Ext.define('catcher.controller.MatchController', {
             player_id : scoringPlayer.player_id,
             match_id : matchId,
             assist_player_id : assistPlayerId,
-            time : Date.now()
+            time : Date.now()/1000
         });
+        
+        points.findRecord("point_id",new_id).setDirty();
+        points.sync();
 
-        var match = Ext.getStore("Matches").findRecord("match_id", matchId, false, false, false, true).data;
+        var match = matches.findRecord("match_id", matchId, false, false, false, true).data;
         if (match.home_id == scoringPlayer.team) {
             match.score_home++;
         } else {
             match.score_away++;
         }
+        
+        matches.findRecord("match_id", matchId, false, false, false, true).setDirty();      
+        matches.sync();
 
         this.getMatchesNavigation().pop(); // Back to the match overview (update scores).
         fillMatchDetailContent(this.getMatchDetail(), match);
@@ -142,6 +149,7 @@ Ext.define('catcher.controller.MatchController', {
         var point = Ext.getStore("Points").findRecord("point_id", values.pointId);
         point.set("player_id", values.scoringPlayer);
         point.set("assist_player_id", values.assistPlayer);
+        Ext.getStore("Points").sync();
 
         // Back and reload.
         this.getMatchesNavigation().pop();
@@ -154,7 +162,9 @@ Ext.define('catcher.controller.MatchController', {
     deletePoint : function() {
         var values = this.getEditPointDetail().getValues();
         var store = Ext.getStore("Points");
-        store.remove(store.findRecord("point_id", values.pointId));
+        var remove = store.findRecord("point_id", values.pointId);
+        store.remove(remove);
+        store.sync();
 
         var matchId = Ext.getStore("Session").findRecord("uuid", Ext.device.Device.uuid).match_id;
         var match = Ext.getStore("Matches").findRecord("match_id", matchId, false, false, false, true).data;
@@ -166,6 +176,9 @@ Ext.define('catcher.controller.MatchController', {
         } else {
             match.score_away--;
         }
+        
+        Ext.getStore("Matches").findRecord("match_id", matchId, false, false, false, true).setDirty();
+        Ext.getStore("Matches").sync();
 
         // Back and reload.
         this.getMatchesNavigation().pop();

@@ -30,21 +30,25 @@ Ext.define('catcher.view.TeamList', {
 						var evidence = Ext.getStore("Evidence"); 
 						var parent = evidence.getNodeById(this.target);
 						var new_id = players.getAt(players.getCount()-1);
-						new_id = new_id.get("player_id")+1;						
-						var novy_hrac = {
+						new_id = parseInt(new_id.get("player_id"))+1;
+						novy_hrac = {
 							name:"Nový",
-							surname: "Hráč",
-							text: "Nový Hráč #1",
-							leaf: true,
+							surname: "Hráč",							
 							team: this.target,
 							number: 1,
-							player_id: new_id
-						};
+							player_id: new_id,
+							text: "Nový Hráč #1",
+							leaf: true
+						};						
 						
 						var name_short = Ext.getStore("Teams").findRecord("team_id",this.target);						
-						Ext.getCmp("teamList").setBackText(name_short.get("name_short"));												 
-						parent.appendChild(novy_hrac);						
-						players.add(novy_hrac);					
+						Ext.getCmp("teamList").setBackText(name_short.get("name_short"));
+																		 
+						parent.appendChild(novy_hrac); // připojení do Evidence (Nestead List)																							
+						players.add(novy_hrac); // uložení do Players a hack na insert do databáze
+						var update = players.findRecord("player_id",new_id);
+						update.setDirty(); // force dirty
+						players.sync();
 						
 						Ext.getCmp("teamList").goToLeaf(parent.lastChild);
 						catcher.app.getController("Evidence").showPlayer(false,{data:novy_hrac});

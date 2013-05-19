@@ -20,6 +20,7 @@ Ext.define('catcher.controller.Evidence', {
         var child = parentNode.findChild("player_id", data.player_id); // node mazaném hráče v TreeStore
         Ext.getCmp("teamList").onBackTap(); // vyvolat back event
         parentNode.removeChild(child); // odstranit node s hráčem
+        store.sync();
     },
 
     updatePlayer : function() {
@@ -35,6 +36,8 @@ Ext.define('catcher.controller.Evidence', {
         data.set("surname", values.surname);
         data.set("team", values.team);
         data.set("number", values.number);
+        
+        store.sync();
 
         Ext.Viewport.setMasked({
             xtype : 'loadmask',
