@@ -73,23 +73,20 @@ Ext.define('catcher.controller.MatchController', {
         var assistPlayerId = this.getAddPointDetail().query("selectfield[name=assistPlayer]")[0].getValue();
 
         var points = Ext.getStore("Points");
-        var new_id = 1;
-        if (points.getCount() > 0) {
-            new_id = points.getAt(points.getCount() - 1).get("point_id");
-            new_id = new_id + 1;
-        }
+        var new_id = getNewId(points);
 
-        // Add the point and raise score.
-        points.add({
+        var point = Ext.create("catcher.model.Point", {
             point_id : new_id,
             team_id : scoringPlayer.team,
             player_id : scoringPlayer.player_id,
             match_id : matchId,
             assist_player_id : assistPlayerId,
-            time : Date.now()/1000
+            time : Date.now() / 1000
         });
-        
-        points.findRecord("point_id",new_id).setDirty();
+        // Add the point and raise score.
+        points.add(point);
+        point.setDirty();
+        console.log(points, new_id);
         points.sync();
 
         var match = matches.findRecord("match_id", matchId, false, false, false, true).data;
@@ -98,8 +95,8 @@ Ext.define('catcher.controller.MatchController', {
         } else {
             match.score_away++;
         }
-        
-        matches.findRecord("match_id", matchId, false, false, false, true).setDirty();      
+
+        matches.findRecord("match_id", matchId, false, false, false, true).setDirty();
         matches.sync();
 
         this.getMatchesNavigation().pop(); // Back to the match overview (update scores).
@@ -176,7 +173,7 @@ Ext.define('catcher.controller.MatchController', {
         } else {
             match.score_away--;
         }
-        
+
         Ext.getStore("Matches").findRecord("match_id", matchId, false, false, false, true).setDirty();
         Ext.getStore("Matches").sync();
 
@@ -278,4 +275,17 @@ function createPlayerOption(player) {
         text : fullName(player),
         value : player.player_id
     };
+}
+
+function getNewId(store) {
+    store.clearFilter();
+    var id = 0;
+
+    store.each(function(item, index, length) {
+        var itemId = parseInt(item.get("point_id"));
+        if (itemId > id) {
+            id = itemId;
+        }
+    });
+    return ++id;
 }
