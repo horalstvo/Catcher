@@ -1,5 +1,6 @@
 Ext.define('catcher.store.Points', {
     extend : 'Ext.data.Store',
+    requires : [ "Ext.data.proxy.Rest" ],
     config : {
         model : 'catcher.model.Point',
         storeId : 'Points',
