@@ -41,6 +41,11 @@ Ext.define("catcher.view.MatchDetail", {
                 xtype : "matchPlayerList",
                 name : "awayTeam"
             } ],
-        } ]
+        } ],
+      listeners	:	{
+      	painted	:	function(){
+					Ext.getCmp("tournament").getTabBar().hide();
+				}
+			}
     },
 });

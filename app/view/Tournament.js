@@ -18,6 +18,7 @@ Ext.define("catcher.view.Tournament", {
 
 	config : {
 		tabBarPosition : "bottom",
+		id: "tournament",
 		items : [ {
 			xtype : "matchesNavigation"
 		}, {
