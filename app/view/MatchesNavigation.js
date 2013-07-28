@@ -34,7 +34,7 @@ Ext.define("catcher.view.MatchesNavigation", {
                     }
 
                     var match_id = Ext.getStore("Session").findRecord("uuid", Ext.device.Device.uuid).match_id;
-                    if (typeof match_id != 'undefined') {
+                    if (typeof match_id != 'undefined' && typeof Ext.getCmp("matchDetail") != "undefined") {
                         var matches = Ext.getStore("Matches");
                         matches.load();
                         var match = matches.findRecord("match_id", match_id, false, false, false, true).data;

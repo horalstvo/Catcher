@@ -4,6 +4,7 @@ Ext.define("catcher.view.MatchDetail", {
     requires : [ "Ext.SegmentedButton" ],
 
     config : {
+        id : "matchDetail",
         title : "Match Detail",
         layout : "vbox",
         styleHtmlContent : true,
