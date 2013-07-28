@@ -20,6 +20,12 @@ Ext.define("catcher.view.PlayersDetail",{
 						name: "number",
 						options: []
 					},
+          {
+						xtype: "textfield",
+						label: "Přezdívka",
+						name: "nick",
+						value: ""
+					},
 					{
 						xtype: "textfield",
 						label: "Jméno",
@@ -60,4 +66,4 @@ Ext.define("catcher.view.PlayersDetail",{
 			}							 
 		},														
 	}				
-});
+}); 
