@@ -12,6 +12,10 @@ Ext.define('catcher.model.Player', {
             name : 'surname',
             type : 'string'
         }, {
+        }, {
+            name : 'nick',
+            type : 'string'
+        }, {
             name : 'team',
             type : 'int'
         }, {
@@ -22,7 +26,7 @@ Ext.define('catcher.model.Player', {
 
     fullName : function() {
         var d = this.data;
-        names = [ d.name, d.surname, "#" + d.number ];
+        names = [d.nick, "- " + d.name, d.surname, "#" + d.number ];
         return names.join(" ");
     }
 });
