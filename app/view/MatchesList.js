@@ -7,7 +7,7 @@ Ext.define("catcher.view.MatchesList", {
         iconCls : "time",
         styleHtmlContent : true,
         style : 'font-size : 1.4em',
-
+        id : "matchesList",
         items : [],
 
         store : "Matches",
@@ -18,7 +18,7 @@ Ext.define("catcher.view.MatchesList", {
                 var store = Ext.getStore("Matches");
                 var session = Ext.getStore("Session").findRecord("uuid", Ext.device.Device.uuid);
                 store.clearFilter();
-                store.filter("tournament_id", session.get("tournament_id"));                
+                store.filter("tournament_id", session.get("tournament_id"));
                 Ext.getCmp("tournament").getTabBar().show();
             }
         }
