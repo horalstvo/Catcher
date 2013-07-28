@@ -128,20 +128,20 @@ Ext.define('catcher.controller.MatchController', {
         var scorer = Ext.getStore("Players").findRecord("player_id", session.score_player_id, false, false, false, true).data;
         var assistent = Ext.getStore("Players").findRecord("player_id", assist_player_id, false, false, false, true).data;
         var message = "Skóroval " + fullName(scorer) + ",<br>nahrával " + fullName(assistent);
-        
+
         Ext.Msg.confirm("Zadat bod?", message, function(response) {
-            
+
             if (response == "yes") {
                 catcher.app.getController("MatchController").addPointInternal(assist_player_id);
             }
         });
     },
-    
+
     addPointInternal : function(assist_player_id) {
         var session = Ext.getStore("Session").findRecord("uuid", Ext.device.Device.uuid);
         var points = Ext.getStore("Points");
         var new_id = getNewId(points);
-        
+
         var point = Ext.create("catcher.model.Point", {
             point_id : new_id,
             team_id : session.score_team_id,
@@ -252,7 +252,7 @@ Ext.define('catcher.controller.MatchController', {
         this.getScoreList().deselectAll();
         this.fillMatchDetailContent(match);
     },
-    
+
     fillMatchDetailContent : function(match) {
         this.getMatchDetail().query("button[name=scoreHome]")[0].setText(new String(match.score_home));
         this.getMatchDetail().query("button[name=scoreAway]")[0].setText(new String(match.score_away));
@@ -260,7 +260,7 @@ Ext.define('catcher.controller.MatchController', {
 });
 
 function fullName(player) {
-    return player.name + " " + player.surname + " #" + player.number;
+    return player.surname + " " + player.name + " #" + player.number;
 }
 
 function getTeamScore(matchId, teamId) {
@@ -283,6 +283,7 @@ function getTeamScore(matchId, teamId) {
             scoringPlayer : fullName(scoringPlayer.data),
             assistPlayer : assistPlayer != null ? fullName(assistPlayer.data) : "",
             pointId : item.get("point_id"),
+            time : item.get("time")
         });
     });
 
@@ -298,13 +299,21 @@ function getTeamScore(matchId, teamId) {
             }, {
                 name : 'pointId',
                 type : 'int'
+            }, {
+                name : 'time',
+                type : 'date',
+                dateFormat : 'timestamp'
             } ]
         }
     });
 
     return new Ext.data.Store({
         model : 'PointView',
-        data : pointsToDisplay
+        data : pointsToDisplay,
+        sorters : [ {
+            property : 'time',
+            direction : 'DESC'
+        } ]
     });
 }
 

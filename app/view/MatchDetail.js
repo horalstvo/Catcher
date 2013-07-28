@@ -8,7 +8,7 @@ Ext.define("catcher.view.MatchDetail", {
         layout : "vbox",
         styleHtmlContent : true,
 
-        items : [ {
+        items : [{
             xtype : "segmentedbutton",
             layout : {
                 align : "stretchmax",
@@ -34,7 +34,7 @@ Ext.define("catcher.view.MatchDetail", {
                 pack : "center",
                 type : "hbox"
             },
-            style : "font-size: 5em",
+            style : "font-size: 5em;margin-top : 20px",
             items : [ {
                 xtype : "button",
                 flex : 1,
