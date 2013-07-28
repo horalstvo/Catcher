@@ -1,7 +1,7 @@
 Ext.define("catcher.view.MatchDetail", {
     extend : "Ext.Panel",
     xtype : "matchDetail",
-    requires : [ "Ext.carousel.Carousel", "catcher.view.MatchPlayerList", "Ext.SegmentedButton" ],
+    requires : [ "Ext.SegmentedButton" ],
 
     config : {
         title : "Match Detail",
@@ -28,24 +28,29 @@ Ext.define("catcher.view.MatchDetail", {
                 text : "[away]",
             } ],
         }, {
-            xtype : "carousel",
-            flex : 1,
+            xtype : "segmentedbutton",
             layout : {
                 align : "stretchmax",
                 pack : "center",
+                type : "hbox"
             },
+            style : "font-size: 5em",
             items : [ {
-                xtype : "matchPlayerList",
-                name : "homeTeam"
+                xtype : "button",
+                flex : 1,
+                name : "addPointHome",
+                text : "+",
             }, {
-                xtype : "matchPlayerList",
-                name : "awayTeam"
+                xtype : "button",
+                flex : 1,
+                name : "addPointAway",
+                text : "+",
             } ],
         } ],
-      listeners	:	{
-      	painted	:	function(){
-					Ext.getCmp("tournament").getTabBar().hide();
-				}
-			}
+        listeners : {
+            painted : function() {
+                Ext.getCmp("tournament").getTabBar().hide();
+            }
+        }
     },
 });

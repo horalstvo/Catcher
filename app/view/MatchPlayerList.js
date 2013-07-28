@@ -5,16 +5,14 @@ Ext.define("catcher.view.MatchPlayerList", {
 
     config : {
         scrollVertical : true,
-        items : [ {
-            xtype : "label",
-            docked : "top",
-            name : "teamName",
-            style : 'font-size : 1em'
-        } ],
         store : "Players",
         itemTpl : "{number} {name} {surname}",
-        style : 'font-size : 1.4em',
+        style : 'font-size : 1.2em',
         onItemDisclosure : true,
+        listeners : {
+            activate : function() {
+                this.getStore().sort();
+            }
+        }
     },
-
 });
