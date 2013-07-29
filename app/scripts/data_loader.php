@@ -82,10 +82,12 @@ if($method == "DELETE"){ // budeme nìco mazat ze storu
 }
 
 if($method == "GET"){ // stažení dat
-	if(!empty($store)){						
-		$vysledek = mysql_query("SELECT * FROM mod_catcher_$store");
+	if(!empty($store)){
+    $skryte = "";
+    if($store == "teams") $skryte = "WHERE viditelnost = 1";						
+		$vysledek = mysql_query("SELECT * FROM mod_catcher_$store $skryte");
 		while($data = mysql_fetch_array($vysledek)){
-			if($store == "matches"){
+			if($store == "matches"){        
 				$home = mysql_fetch_array(mysql_query("SELECT * FROM mod_catcher_teams WHERE id = $data[home_id]"));
 				$away = mysql_fetch_array(mysql_query("SELECT * FROM mod_catcher_teams WHERE id = $data[away_id]"));
 				$data["home_name_short"] = $home["name_short"];

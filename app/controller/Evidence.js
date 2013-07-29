@@ -36,6 +36,7 @@ Ext.define('catcher.controller.Evidence', {
         data.set("surname", values.surname);
         data.set("team", values.team);
         data.set("number", values.number);
+        data.set("nick", values.nick);
         
         store.sync();
 
@@ -63,7 +64,8 @@ Ext.define('catcher.controller.Evidence', {
         this.getKarticka().setValues({
             name : record.data.name,
             surname : record.data.surname,
-            player_id : record.data.player_id
+            player_id : record.data.player_id,
+            nick : record.data.nick
         });
 
         // nastavit options pro select = tým
@@ -107,6 +109,7 @@ Ext.define('catcher.controller.Evidence', {
                     surname : detail.get("surname"),
                     team : detail.get("team"),
                     number : detail.get("number"),
+                    nick : detail.get("nick"),
                     leaf : true
                 });
             });
