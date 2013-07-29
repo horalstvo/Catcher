@@ -15,8 +15,16 @@ function convert2($string){
 	return iconv("utf-8","cp1250",$string);
 }
 
+$tab1 = "mod_catcher_teams";
+$tab2 = "mod_catcher_players";
+$tab3 = "mod_catcher_team2tournament";
+$tab4 = "mod_catcher_player2tournament";
+$tab5 = "mod_catcher_matches";
+$tab6 = "mod_catcher_points";
+       
 $output = array();
 $store = $_GET["store"];
+if(isset($_GET["tournament_id"])) $tournament_id = $_GET["tournament_id"];
 $method = $_SERVER['REQUEST_METHOD'];
 if(isset($_REQUEST['callback'])) $callback = $_REQUEST['callback'];
 
@@ -83,24 +91,44 @@ if($method == "DELETE"){ // budeme nìco mazat ze storu
 
 if($method == "GET"){ // stažení dat
 	if(!empty($store)){
-    $skryte = "";
-    if($store == "teams") $skryte = "WHERE viditelnost = 1";						
-		$vysledek = mysql_query("SELECT * FROM mod_catcher_$store $skryte");
-		while($data = mysql_fetch_array($vysledek)){
-			if($store == "matches"){        
-				$home = mysql_fetch_array(mysql_query("SELECT * FROM mod_catcher_teams WHERE id = $data[home_id]"));
-				$away = mysql_fetch_array(mysql_query("SELECT * FROM mod_catcher_teams WHERE id = $data[away_id]"));
-				$data["home_name_short"] = $home["name_short"];
-				$data["home_name_full"] = $home["name_full"];
-				$data["away_name_short"] = $away["name_short"];
-				$data["away_name_full"] = $away["name_full"];
-			}
-			foreach($cols[$store] as $index=>$value){
-	    	$data[$value] = convert($data[$value]);
-	    	$tmp[$index] = $data[$value];
-	  	}
-	  	$output[] = $tmp;
-		}
+    $skryte = "AND viditelnost=1";
+    if(isset($tournament_id)) $t_cond = "tournament_id=$tournament_id";
+    switch($store){
+      case "teams":
+        $vysledek = mysql_query("SELECT $tab1.* FROM $tab1 LEFT JOIN $tab3 ON $tab3.team_id=$tab1.id WHERE $tab3.$t_cond $skryte");
+        echo mysql_error();
+      break;
+      case "matches":
+        $vysledek = mysql_query("SELECT * FROM $tab5 WHERE $t_cond ORDER BY time");
+      break;
+      case "points":
+        $vysledek = mysql_query("SELECT * FROM $tab6 LEFT JOIN $tab5 ON $tab5.id=$tab6.match_id WHERE $t_cond");
+      break;
+      case "players":
+        $vysledek = mysql_query("SELECT $tab2.* FROM $tab2 LEFT JOIN $tab4 ON $tab4.player_id=$tab2.id WHERE $tab4.$t_cond $skryte");
+      break;
+      case "tournaments":
+        $vysledek = mysql_query("SELECT * FROM mod_catcher_tournaments ORDER BY name");
+      break;
+    }						
+		
+    if(isset($vysledek)) {
+  		while($data = mysql_fetch_array($vysledek)){
+  			if($store == "matches"){        
+  				$home = mysql_fetch_array(mysql_query("SELECT * FROM mod_catcher_teams WHERE id = $data[home_id]"));
+  				$away = mysql_fetch_array(mysql_query("SELECT * FROM mod_catcher_teams WHERE id = $data[away_id]"));
+  				$data["home_name_short"] = $home["name_short"];
+  				$data["home_name_full"] = $home["name_full"];
+  				$data["away_name_short"] = $away["name_short"];
+  				$data["away_name_full"] = $away["name_full"];
+  			}
+  			foreach($cols[$store] as $index=>$value){
+  	    	$data[$value] = convert($data[$value]);
+  	    	$tmp[$index] = $data[$value];
+  	  	}
+  	  	$output[] = $tmp;
+  		}
+    }
 	}					
 }
 

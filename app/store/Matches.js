@@ -15,6 +15,6 @@ Ext.define('catcher.store.Matches', {
         // grouper: function(record){
         // return record.get("home_name_short")[0];
         // },
-        autoLoad : true
+        autoLoad : false
     }
 });
