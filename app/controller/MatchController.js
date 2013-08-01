@@ -253,6 +253,7 @@ Ext.define('catcher.controller.MatchController', {
         points.remove(remove);        
         points.sync();               
         
+        this.updateMatchPoints(match_id);
         this.updateMatchInfo(match_id);
     },
 
