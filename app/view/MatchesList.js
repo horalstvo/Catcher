@@ -11,6 +11,7 @@ Ext.define("catcher.view.MatchesList", {
         items : [],
 
         store : "Matches",
+        sorters: "time",
         loadingText: "Aktualizuji data z www.frisbee.cz",
         itemTpl : "{home_name_full} vs. {away_name_full} ({score_home}:{score_away}) - {time:date('G:i')}",
         onItemDisclosure : true,

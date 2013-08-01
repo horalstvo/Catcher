@@ -14,7 +14,9 @@ Ext.define("catcher.view.MatchPlayerList", {
                 this.getStore().sort();
             },
             painted : function(){
-              Ext.getCmp("matchPlayerList").deselectAll();
+              if (typeof matchList != 'undefined') {
+                Ext.getCmp("matchPlayerList").deselectAll();
+              }
             }
         }
     },
