@@ -51,8 +51,8 @@ Ext.define("catcher.view.MatchesNavigation", {
                         });                                                
                         matches.load(function(){
                           var match = matches.findRecord("match_id", match_id, false, false, false, true).data;
-                          catcher.app.getController("MatchController").fillMatchDetailContent(match);
                           Ext.Viewport.setMasked(false);
+                          catcher.app.getController("MatchController").fillMatchDetailContent(match);                          
                         });                                                  
                     }
                 }
