@@ -61,11 +61,13 @@ Ext.define('catcher.controller.Evidence', {
         }
 
         // naplnit hráčovu kartičku
-        this.getKarticka().setValues({
-            name : record.data.name,
-            surname : record.data.surname,
-            player_id : record.data.player_id,
-            nick : record.data.nick
+        if(typeof record.raw == "undefined") record.raw = record.data.data;
+
+        this.getKarticka().setValues({          
+            name : record.raw.name,
+            surname : record.raw.surname,
+            player_id : record.raw.player_id,
+            nick : record.raw.nick
         });
 
         // nastavit options pro select = tým
@@ -78,8 +80,8 @@ Ext.define('catcher.controller.Evidence', {
         });
 
         // nastavit selected hodnoty pro Tým a Číslo hráče
-        this.getKarticka().query("selectfield[name=team]")[0].setOptions(teams).setValue(record.data.team);
-        this.getKarticka().query("selectfield[name=number]")[0].setOptions(numbers).setValue(record.data.number);
+        this.getKarticka().query("selectfield[name=team]")[0].setOptions(teams).setValue(record.raw.team);
+        this.getKarticka().query("selectfield[name=number]")[0].setOptions(numbers).setValue(record.raw.number);
     },
 
     sestavEvidenci : function(team_id) {
@@ -99,12 +101,15 @@ Ext.define('catcher.controller.Evidence', {
             };
             data.push(team);
             players.filter("team", radek.get("team_id"));
+            players.sort({
+              property : "nick"
+            });
             players.each(function(detail) {
                 var index = data.length - 1;
                 var jmeno = [ detail.get("name"), detail.get("surname") ];
                 data[index].items.push({
-                    text : jmeno.join(" ") + " #" + detail.get("number"),
-                    player_id : detail.get("player_id"),
+                    text : detail.get("nick")+ " #" + detail.get("number")+" ("+jmeno.join(" ")+")",
+                    player_id : detail.get("player_id")*1,
                     name : detail.get("name"),
                     surname : detail.get("surname"),
                     team : detail.get("team"),
@@ -125,7 +130,7 @@ Ext.define('catcher.controller.Evidence', {
         Ext.Viewport.setMasked(false);
 
         if (team_id > 0) {
-            Ext.Msg.alert("OK", "Záznam upraven", function() {
+            Ext.Msg.alert("OK", "Provedeno", function() {
                 var parent = evidence.findRecord("team_id", team_id, false, false, false, true);
                 nl.goToNode(parent);
                 Ext.getCmp("addPlayer").show();

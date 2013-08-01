@@ -39,6 +39,31 @@ $cols_app["players"]["player_id"] = "player_id";
 $cols_app["matches"]["match_id"] = "match_id";
 $cols_app["points"]["point_id"] = "point_id";
 
+function update_match($match_id){
+  $data = mysql_fetch_array(mysql_query("SELECT home_id, away_id FROM mod_catcher_matches WHERE id='$match_id'"));
+  $score_home = mysql_fetch_array(mysql_query("SELECT count(id) as score FROM mod_catcher_points WHERE match_id = '$match_id' AND team_id='$data[home_id]'"));
+  $score_away = mysql_fetch_array(mysql_query("SELECT count(id) as score FROM mod_catcher_points WHERE match_id = $match_id AND team_id='$data[away_id]'"));
+  mysql_query("UPDATE mod_catcher_matches SET score_home = '$score_home[score]', score_away = '$score_away[score]' WHERE id = $match_id");
+}
+
+if($method == "POST"){ // insert dat ve storu
+  $data = file_get_contents("php://input");
+	$data = json_decode($data,true);
+  foreach($cols_app[$store] as $index=>$value){
+  	$data[$value] = convert2($data[$value]);
+	}
+  switch($store){
+    case "points":
+  		mysql_query("INSERT INTO mod_catcher_$store (player_id,assist_player_id,match_id,team_id,time) VALUES ($data[player_id],$data[assist_player_id],$data[match_id],$data[team_id],$data[time])");
+      update_match($data["match_id"]);
+  	break;
+    case "players":
+      mysql_query("INSERT INTO mod_catcher_$store (name,surname,number,team,nick, viditelnost) VALUES ('$data[name]','$data[surname]','$data[number]','$data[team]','$data[nick]',1)");
+      mysql_query("INSERT INTO $tab4 (player_id, tournament_id) VALUES (".mysql_insert_id().",$tournament_id)");
+    break;
+  }
+} 
+
 if($method == "PUT"){ // update dat ve storu
 	$data = file_get_contents("php://input");
 	$data = json_decode($data,true);
@@ -46,29 +71,17 @@ if($method == "PUT"){ // update dat ve storu
   	$data[$value] = convert2($data[$value]);
 	}
 	switch($store){
-		case "players":
-			$vysledek = mysql_query("SELECT id FROM mod_catcher_$store WHERE id = '$data[player_id]'");
-			if(mysql_num_rows($vysledek) == 0){ // jde o insert
-				mysql_query("INSERT INTO mod_catcher_$store (id,name,surname,number,team,nick) VALUES ($data[player_id],'$data[name]','$data[surname]','$data[number]','$data[team]','$data[nick]')");
-			}else{
-				mysql_query("UPDATE mod_catcher_$store SET name = '$data[name]', surname = '$data[surname]', number = '$data[number]', team = $data[team], nick='$data[nick]' WHERE id = $data[player_id]");
-			}						
+		case "players":		
+			mysql_query("UPDATE mod_catcher_$store SET name = '$data[name]', surname = '$data[surname]', number = '$data[number]', team = $data[team], nick='$data[nick]' WHERE id = $data[player_id]");						
 		break;
 		
 		case "matches":
-      $score_home = mysql_fetch_array(mysql_query("SELECT count(id) as score FROM mod_catcher_points WHERE match_id = $data[match_id] AND team_id='$data[home_id]'"));
-      $score_away = mysql_fetch_array(mysql_query("SELECT count(id) as score FROM mod_catcher_points WHERE match_id = $data[match_id] AND team_id='$data[away_id]'"));
-			mysql_query("UPDATE mod_catcher_$store SET score_home = '$score_home[score]', score_away = '$score_away[score]' WHERE id = $data[match_id]");
+      update_match($data["match_id"]);      			
 		break;
 		
 		case "points":
-			$vysledek = mysql_query("SELECT id FROM mod_catcher_$store WHERE id = '$data[point_id]'");
-			if(mysql_num_rows($vysledek) == 0){ // jde o insert
-				mysql_query("INSERT INTO mod_catcher_$store (id,player_id,assist_player_id,match_id,team_id,time) VALUES ($data[point_id],$data[player_id],$data[assist_player_id],$data[match_id],$data[team_id],$data[time])");
-			}else{
-				mysql_query("UPDATE mod_catcher_$store SET player_id = '$data[player_id]', assist_player_id = '$data[assist_player_id]' WHERE id = $data[point_id]");
-			}
-
+			mysql_query("UPDATE mod_catcher_$store SET player_id = '$data[player_id]', assist_player_id = '$data[assist_player_id]' WHERE id = $data[point_id]");
+      update_match($data["match_id"]);
 		break;
 		
 	}		
@@ -81,15 +94,17 @@ if($method == "DELETE"){ // budeme nìco mazat ze storu
 	switch($store){
 		case "players":	
 			mysql_query("DELETE FROM mod_catcher_$store WHERE id = $data[player_id]");
+      mysql_query("DELETE FROM $tab4 WHERE tournament_id = $tournament_id AND player_id = $data[player_id]");
 		break;
 		
-		case "points":
-			mysql_query("DELETE FROM mod_catcher_$store WHERE id = $data[point_id]");
+		case "points":			      
+      mysql_query("DELETE FROM mod_catcher_$store WHERE id = $data[point_id]");
+      update_match($data["match_id"]);
 		break;
 	}
 }
 
-if($method == "GET"){ // stažení dat
+if($method == "GET"){ // stažení dat, rùzné prùbìžné aktualizaèní požadavky
 	if(!empty($store)){
     $skryte = "AND viditelnost=1";
     if(isset($tournament_id)) $t_cond = "tournament_id=$tournament_id";
@@ -99,10 +114,22 @@ if($method == "GET"){ // stažení dat
         echo mysql_error();
       break;
       case "matches":
-        $vysledek = mysql_query("SELECT * FROM $tab5 WHERE $t_cond ORDER BY time");
+        if(isset($_GET["id"])){
+          // dotaz na jediný konkrétní zápas
+          $vysledek = mysql_query("SELECT * FROM $tab5 WHERE id = '".$_GET["id"]."'");
+        }else{
+          // standardní naèítání dat
+          $vysledek = mysql_query("SELECT * FROM $tab5 WHERE $t_cond ORDER BY time");
+        }        
       break;
       case "points":
-        $vysledek = mysql_query("SELECT * FROM $tab6 LEFT JOIN $tab5 ON $tab5.id=$tab6.match_id WHERE $t_cond");
+        if(isset($_GET["match_id"])){
+          // dotaz na jediný konkrétní zápas (aktualizace poèitadel)
+          $vysledek = mysql_query("SELECT $tab6.* FROM $tab6 LEFT JOIN $tab5 ON $tab5.id=$tab6.match_id WHERE $tab6.match_id = '".$_GET["match_id"]."'");
+        }else{
+          // standardní naèítání dat
+          $vysledek = mysql_query("SELECT $tab6.* FROM $tab6 LEFT JOIN $tab5 ON $tab5.id=$tab6.match_id");
+        }
       break;
       case "players":
         $vysledek = mysql_query("SELECT $tab2.* FROM $tab2 LEFT JOIN $tab4 ON $tab4.player_id=$tab2.id WHERE $tab4.$t_cond $skryte");
@@ -121,11 +148,19 @@ if($method == "GET"){ // stažení dat
   				$data["home_name_full"] = $home["name_full"];
   				$data["away_name_short"] = $away["name_short"];
   				$data["away_name_full"] = $away["name_full"];
-  			}
+  			}        
   			foreach($cols[$store] as $index=>$value){
   	    	$data[$value] = convert($data[$value]);
   	    	$tmp[$index] = $data[$value];
-  	  	}
+  	  	}        
+        if($store == "points"){          
+          $match_info = mysql_fetch_array(mysql_query("SELECT home_id, away_id FROM mod_catcher_matches WHERE id = '$data[match_id]'"));
+          $score["score_home"] = mysql_fetch_array(mysql_query("SELECT count(id) as score FROM mod_catcher_points WHERE team_id='$match_info[home_id]' AND match_id='$data[match_id]' AND time <= $data[time]"));
+          $score["score_away"] = mysql_fetch_array(mysql_query("SELECT count(id) as score FROM mod_catcher_points WHERE team_id='$match_info[away_id]' AND match_id='$data[match_id]' AND time <= $data[time]"));
+          $tmp["score_home"] = $score["score_home"]["score"];        
+          $tmp["score_away"] = $score["score_away"]["score"];
+        }
+//         print_r($tmp);
   	  	$output[] = $tmp;
   		}
     }

@@ -2,6 +2,9 @@ Ext.define('catcher.model.Player', {
     extend : 'Ext.data.Model',
     config : {
         idProperty : 'player_id',
+        identifier : {
+          type: "sequential"
+        },
         fields : [ {
             name : 'player_id',
             type : 'int'

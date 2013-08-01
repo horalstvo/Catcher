@@ -21,7 +21,7 @@ Ext.define("catcher.view.MatchesNavigation", {
                 align : "right",
                 name : "refreshConfirm",
                 id : "refreshStores",
-                handler : function() {
+                handler : function() {                        
                     // window.location.reload();
                     var matchList = Ext.getCmp("matchesList");
                     if (typeof matchList != 'undefined') {
@@ -30,15 +30,30 @@ Ext.define("catcher.view.MatchesNavigation", {
 
                     var scoreList = Ext.getCmp("scoreList");
                     if (typeof scoreList != 'undefined') {
-                        scoreList.getStore().load();
+                        Ext.Viewport.setMasked({
+                          xtype : 'loadmask',
+                          message : 'Aktualizuji data z www.frisbee.cz',
+                          indicator : true
+                        });                                          
+                        scoreList.getStore().load(function(){
+                          Ext.Viewport.setMasked(false);
+                        });
                     }
 
-                    var match_id = Ext.getStore("Session").findRecord("uuid", Ext.device.Device.uuid).match_id;
-                    if (typeof match_id != 'undefined' && typeof Ext.getCmp("matchDetail") != "undefined") {
+                    var matchDetail = Ext.getCmp("matchDetail");
+                    var match_id = Ext.getStore("Session").findRecord("uuid", Ext.device.Device.uuid).match_id;                                       
+                    if (typeof match_id != 'undefined' && typeof matchDetail != 'undefined') {
                         var matches = Ext.getStore("Matches");
-                        matches.load();
-                        var match = matches.findRecord("match_id", match_id, false, false, false, true).data;
-                        catcher.app.getController("MatchController").fillMatchDetailContent(match);
+                        Ext.Viewport.setMasked({
+                          xtype : 'loadmask',
+                          message : 'Aktualizuji data z www.frisbee.cz',
+                          indicator : true
+                        });                                                
+                        matches.load(function(){
+                          var match = matches.findRecord("match_id", match_id, false, false, false, true).data;
+                          catcher.app.getController("MatchController").fillMatchDetailContent(match);
+                          Ext.Viewport.setMasked(false);
+                        });                                                  
                     }
                 }
             } ]

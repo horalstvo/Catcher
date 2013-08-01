@@ -1,8 +1,7 @@
 Ext.define("catcher.view.Login", {
     extend : "Ext.form.Panel",
     xtype : "loginPanel",
-    requires : [ "Ext.form.FieldSet", "Ext.form.Select", "Ext.form.Password", "Ext.Object", "Ext.Array", "Ext.device.Device", "Ext.data.Model",
-            "Ext.data.Store" ],
+    requires : [ "Ext.form.FieldSet", "Ext.form.Select", "Ext.form.Password", "Ext.Object", "Ext.Array", "Ext.device.Device", "Ext.data.Model", "Ext.data.Store" ],
 
     config : {
         title : "Přihlášení",

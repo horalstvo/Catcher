@@ -127,10 +127,9 @@ Ext.define('catcher.controller.MatchController', {
 
         var scorer = Ext.getStore("Players").findRecord("player_id", session.score_player_id, false, false, false, true).data;
         var assistent = Ext.getStore("Players").findRecord("player_id", assist_player_id, false, false, false, true).data;
-        var message = "Skóroval " + fullName(scorer) + ",<br>nahrával " + fullName(assistent);
+        var message = "Bod: " + fullName(scorer) + "<br />Asistence: " + fullName(assistent);
 
         Ext.Msg.confirm("Zadat bod?", message, function(response) {
-
             if (response == "yes") {
                 catcher.app.getController("MatchController").addPointInternal(assist_player_id);
             }
@@ -140,36 +139,55 @@ Ext.define('catcher.controller.MatchController', {
     addPointInternal : function(assist_player_id) {
         var session = Ext.getStore("Session").findRecord("uuid", Ext.device.Device.uuid);
         var points = Ext.getStore("Points");
-        var new_id = getNewId(points);
+        var matches = Ext.getStore("Matches");
 
         var point = Ext.create("catcher.model.Point", {
-            point_id : new_id,
+            point_id : false,
             team_id : session.score_team_id,
             player_id : session.score_player_id,
             match_id : session.match_id,
             assist_player_id : assist_player_id,
             time : Date.now() / 1000
+        });        
+        
+                    
+        
+        // přidat bod do interní DB, synchronizovat a označit jako zpracované
+        Ext.Viewport.setMasked({
+            xtype : 'loadmask',
+            message : 'Ukládám bod',
+            indicator : true
         });
-
-        // Add the point and raise score.
-        points.add(point);
-        point.setDirty();
-
-        points.sync();
-
-        var matches = Ext.getStore("Matches");
-        var match = matches.findRecord("match_id", session.match_id, false, false, false, true).data;
-        if (match.home_id == session.score_team_id) {
-            match.score_home++;
-        } else {
-            match.score_away++;
-        }
-
-        matches.findRecord("match_id", session.match_id, false, false, false, true).setDirty();
-        matches.sync();
-
-        this.fillMatchDetailContent(match);
-        this.getMatchesNavigation().pop(2);
+          points.clearFilter();
+          point.setDirty(true);          
+          points.add(point);                  
+          points.sync();
+          point.setDirty(false);
+                                    
+          
+          this.updateMatchPoints(point.get("match_id"));
+          this.updateMatchInfo(point.get("match_id"))
+        Ext.Viewport.setMasked(false);                                                                                                                               
+    },
+    
+    updateMatchInfo : function(match_id){
+      var matches = Ext.getStore("Matches");
+      matches.getProxy().setExtraParam("id",match_id);
+      matches.load(function(){
+        var match = matches.findRecord("match_id",match_id,false,false,false,true);
+        var controller = catcher.app.getController("MatchController");
+        controller.fillMatchDetailContent(match.data);        
+        controller.getMatchesNavigation().pop(2);                
+      });
+      matches.getProxy().setExtraParams({});
+    },    
+    
+    // nastavení počitadla u všech bodů konkrétního zápasu
+    updateMatchPoints : function(match_id){
+      var points = Ext.getStore("Points");
+      points.getProxy().setExtraParam("match_id",match_id);
+      points.load();
+      points.getProxy().setExtraParams({});
     },
 
     showScoreHome : function() {
@@ -193,7 +211,7 @@ Ext.define('catcher.controller.MatchController', {
     },
 
     showEditPoint : function(list, record) {
-        var point = Ext.getStore("Points").findRecord("point_id", record.data.pointId).data;
+        var point = Ext.getStore("Points").findRecord("point_id", record.data.pointId,false,false,false,true).data;
 
         this.getMatchesNavigation().push({
             xtype : "editPointDetail",
@@ -212,7 +230,7 @@ Ext.define('catcher.controller.MatchController', {
     updatePoint : function() {
         var values = this.getEditPointDetail().getValues();
 
-        var point = Ext.getStore("Points").findRecord("point_id", values.pointId);
+        var point = Ext.getStore("Points").findRecord("point_id", values.pointId,false,false,false,true);
         point.set("player_id", values.scoringPlayer);
         point.set("assist_player_id", values.assistPlayer);
         Ext.getStore("Points").sync();
@@ -220,47 +238,39 @@ Ext.define('catcher.controller.MatchController', {
         // Back and reload.
         this.getMatchesNavigation().pop();
         var matchId = Ext.getStore("Session").findRecord("uuid", Ext.device.Device.uuid).match_id;
-        var scoringPlayer = Ext.getStore("Players").findRecord("player_id", values.scoringPlayer).data;
+        var scoringPlayer = Ext.getStore("Players").findRecord("player_id", values.scoringPlayer,false,false,false,true).data;
         this.getScoreList().setStore(getTeamScore(matchId, scoringPlayer.team));
         this.getScoreList().deselectAll();
     },
 
     deletePoint : function() {
         var values = this.getEditPointDetail().getValues();
-        var store = Ext.getStore("Points");
-        var remove = store.findRecord("point_id", values.pointId);
-        store.remove(remove);
-        store.sync();
-
-        var matchId = Ext.getStore("Session").findRecord("uuid", Ext.device.Device.uuid).match_id;
-        var match = Ext.getStore("Matches").findRecord("match_id", matchId, false, false, false, true).data;
-
-        var scoringPlayer = Ext.getStore("Players").findRecord("player_id", values.scoringPlayer).data;
-
-        if (match.home_id == scoringPlayer.team) {
-            match.score_home--;
-        } else {
-            match.score_away--;
-        }
-
-        Ext.getStore("Matches").findRecord("match_id", matchId, false, false, false, true).setDirty();
-        Ext.getStore("Matches").sync();
-
-        // Back and reload.
-        this.getMatchesNavigation().pop();
-        this.getScoreList().setStore(getTeamScore(matchId, scoringPlayer.team));
-        this.getScoreList().deselectAll();
-        this.fillMatchDetailContent(match);
+        var points = Ext.getStore("Points");
+        var matches = Ext.getStore("Matches");
+        var remove = points.findRecord("point_id", values.pointId,false,false,false,true);
+        var match_id = remove.get("match_id");
+                
+        points.remove(remove);        
+        points.sync();               
+        
+        this.updateMatchInfo(match_id);
     },
 
     fillMatchDetailContent : function(match) {
         this.getMatchDetail().query("button[name=scoreHome]")[0].setText(new String(match.score_home));
         this.getMatchDetail().query("button[name=scoreAway]")[0].setText(new String(match.score_away));
+//         getTeamScore(match.match_id,match.home_id);
+//         getTeamScore(match.match_id,match.away_id);
+//         Ext.getStore("Points").clearFilter();
     }
 });
 
-function fullName(player) {
-    return player.surname + " " + player.name + " #" + player.number;
+function fullName(player) {    
+    return player.nick + " #" + player.number + " <small>(" + player.surname + " " + player.name + ")</small>";
+}
+
+function fullNameInput(player) {    
+    return player.nick + " #" + player.number + " (" + player.surname + " " + player.name + ")";
 }
 
 function getTeamScore(matchId, teamId) {
@@ -283,9 +293,11 @@ function getTeamScore(matchId, teamId) {
             scoringPlayer : fullName(scoringPlayer.data),
             assistPlayer : assistPlayer != null ? fullName(assistPlayer.data) : "",
             pointId : item.get("point_id"),
-            time : item.get("time")
+            time : item.get("time"),
+            score_home: item.get("score_home"),
+            score_away: item.get("score_away")
         });
-    });
+    });        
 
     Ext.define("PointView", {
         extend : "Ext.data.Model",
@@ -298,6 +310,14 @@ function getTeamScore(matchId, teamId) {
                 type : 'string'
             }, {
                 name : 'pointId',
+                type : 'int'
+            }, {
+            }, {
+                name : 'score_home',
+                type : 'int'
+            }, {
+            }, {
+                name : 'score_away',
                 type : 'int'
             }, {
                 name : 'time',
@@ -314,7 +334,7 @@ function getTeamScore(matchId, teamId) {
             property : 'time',
             direction : 'DESC'
         } ]
-    });
+    });        
 }
 
 function getCoPlayers(team) {
@@ -333,20 +353,20 @@ function getCoPlayers(team) {
 
 function createPlayerOption(player) {
     return {
-        text : fullName(player),
+        text : fullNameInput(player),
         value : player.player_id
     };
 }
 
-function getNewId(store) {
-    store.clearFilter();
-    var id = 0;
-
-    store.each(function(item, index, length) {
-        var itemId = parseInt(item.get("point_id"));
-        if (itemId > id) {
-            id = itemId;
-        }
-    });
-    return ++id;
-}
+// function getNewId(store) {
+//     store.clearFilter();
+//     var id = 0;
+// 
+//     store.each(function(item, index, length) {
+//         var itemId = parseInt(item.get("point_id"));
+//         if (itemId > id) {
+//             id = itemId;
+//         }
+//     });
+//     return ++id;
+// }

@@ -8,7 +8,7 @@ Ext.define('catcher.store.Players', {
             type : 'rest',
             url : 'http://www.frisbee.cz/catcher/app/scripts/data_loader.php?store=players&',
         },
-        sorters: 'surname',
+        sorters: 'nick',
         autoLoad : false
     }
 });

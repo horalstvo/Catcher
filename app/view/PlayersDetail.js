@@ -66,4 +66,4 @@ Ext.define("catcher.view.PlayersDetail",{
 			}							 
 		},														
 	}				
-}); 
+});

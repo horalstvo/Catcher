@@ -6,12 +6,15 @@ Ext.define("catcher.view.MatchPlayerList", {
     config : {
         scrollVertical : true,
         store : "Players",
-        itemTpl : "{surname} {name} ({number})",
+        itemTpl : "<strong>{nick} #{number}</strong> <small>({surname} {name})</small>",
         style : 'font-size : 1.2em',
         onItemDisclosure : true,
         listeners : {
             activate : function() {
                 this.getStore().sort();
+            },
+            painted : function(){
+              Ext.getCmp("matchPlayerList").deselectAll();
             }
         }
     },

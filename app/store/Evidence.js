@@ -8,10 +8,6 @@ Ext.define('catcher.store.Evidence', {
             text : "Players",
             items : new Array
         },
-        autoLoad : false,
-        listeners : {
-            updaterecord : function() {
-            }
-        }
+        autoLoad : false
     }
 });

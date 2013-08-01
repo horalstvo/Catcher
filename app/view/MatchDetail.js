@@ -1,11 +1,11 @@
 Ext.define("catcher.view.MatchDetail", {
     extend : "Ext.Panel",
-    xtype : "matchDetail",
-    requires : [ "Ext.SegmentedButton" ],
+    xtype : "matchDetail",    
+    requires : [ "Ext.SegmentedButton" ],    
 
     config : {
-        id : "matchDetail",
         title : "Match Detail",
+        id: "matchDetail",
         layout : "vbox",
         styleHtmlContent : true,
 
@@ -35,7 +35,7 @@ Ext.define("catcher.view.MatchDetail", {
                 pack : "center",
                 type : "hbox"
             },
-            style : "font-size: 5em;margin-top : 20px",
+            style : "font-size: 5em; margin-top : 20px",
             items : [ {
                 xtype : "button",
                 flex : 1,
@@ -50,8 +50,16 @@ Ext.define("catcher.view.MatchDetail", {
         } ],
         listeners : {
             painted : function() {
-                Ext.getCmp("tournament").getTabBar().hide();
-            }
-        }
-    },
+                Ext.getCmp("tournament").getTabBar().hide();                
+            },
+            show : function(){
+            this.query('.button').forEach(function(c){
+//               zøejmì bug sencha, vrací jinou tøídu, než ve skuteènosti má mít   
+//               var pressedCls = c.getPressedCls();
+              var pressedCls = "x-button-pressed";         
+              c.removeCls(pressedCls);
+            });
+          }
+      },
+    }
 });

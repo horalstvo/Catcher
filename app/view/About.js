@@ -17,7 +17,7 @@ Ext.define("catcher.view.About",{
 		],
 		
 		html: [
-			"Základní info o aplikaci ..."
+			"<h2>Maribor build</h2> <p>Jestli něco nefunguje, tak nahlásit TM (Kačer, Ondra)</p> <p>Nápady a podněty tamtéž </p>"
 		].join("")		
 	}				
 });

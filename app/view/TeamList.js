@@ -1,4 +1,4 @@
-Ext.define('catcher.view.TeamList', {
+Ext.define('catcher.view.TeamList', {                                             
   extend: "Ext.dataview.NestedList",
   requires: ["catcher.view.PlayersDetail","Ext.dataview.DataView"],  
   xtype: "teamList",
@@ -29,29 +29,34 @@ Ext.define('catcher.view.TeamList', {
 						players.sort("player_id","ASC");
 						var evidence = Ext.getStore("Evidence"); 
 						var parent = evidence.getNodeById(this.target);
-						var new_id = players.getAt(players.getCount()-1);
-						new_id = parseInt(new_id.get("player_id"))+1;
-						novy_hrac = {
+						var novy_hrac = Ext.create("catcher.model.Player",{
+              nick: "AAA nick",
 							name:"Nový",
 							surname: "Hráč",							
 							team: this.target,
 							number: 1,
-							player_id: new_id,
-							text: "Nový Hráč #1",
-							leaf: true
-						};						
+							player_id: false,
+							text: "Nový Hráč #1"
+						});
+            
+            novy_hrac.data.leaf = true;                        						
 						
 						var name_short = Ext.getStore("Teams").findRecord("team_id",this.target);						
 						Ext.getCmp("teamList").setBackText(name_short.get("name_short"));
 																		 
-						parent.appendChild(novy_hrac); // připojení do Evidence (Nestead List)																							
-						players.add(novy_hrac); // uložení do Players a hack na insert do databáze
-						var update = players.findRecord("player_id",new_id);
-						update.setDirty(); // force dirty
+// 						parent.appendChild(novy_hrac); // připojení do Evidence (Nestead List)																							
+						players.add(novy_hrac);
+            novy_hrac.dirty = true;						
 						players.sync();
+            novy_hrac.dirty = false; // wtf?? proč nefunguje metoda setDirty()??
+            novy_hrac.destroy();
+            var cilovy_team = this.target;
+            players.load(function(){
+              catcher.app.getController("Evidence").sestavEvidenci(cilovy_team);
+            });                        
 						
-						Ext.getCmp("teamList").goToLeaf(parent.lastChild);
-						catcher.app.getController("Evidence").showPlayer(false,{data:novy_hrac});
+// 						Ext.getCmp("teamList").goToLeaf(parent.lastChild);
+// 						catcher.app.getController("Evidence").showPlayer(false,{data:novy_hrac});
 						            
 					}					
 				},
@@ -74,6 +79,10 @@ Ext.define('catcher.view.TeamList', {
 			]
     },
     listeners: {
+      painted: function(){
+//         tohle se možná bude hodit, ale zatím to není potřeba (přestavění evidence vždy při jejím zobrazení)
+//         catcher.app.getController("Evidence").sestavEvidenci(false);
+      },
       leafitemtap: function(nestedList, list, index, target, record){
         catcher.app.getController("Evidence").showPlayer(list, record);
         Ext.getCmp("addPlayer").hide();
@@ -100,9 +109,5 @@ Ext.define('catcher.view.TeamList', {
 				} 
 			}			
     }
-  },  
-  
-  initialize: function(){
-    catcher.app.getController("Evidence").sestavEvidenci(false);    						    
-  },
+  }
 });
