@@ -54,7 +54,11 @@ if($method == "POST"){ // insert dat ve storu
 	}
   switch($store){
     case "points":
-  		mysql_query("INSERT INTO mod_catcher_$store (player_id,assist_player_id,match_id,team_id,time) VALUES ($data[player_id],$data[assist_player_id],$data[match_id],$data[team_id],$data[time])");
+      // zahazujeme bod, pokud už tam je, což by se nemìlo stát a chce to nìjak logovat, jestli se tak ještì bude dít    
+      if(mysql_num_rows(mysql_query("SELECT * FROM mod_catcher_$store WHERE time = '$data[time]' AND match_id='$data[match_id]' AND team_id='$data[team_id]' AND player_id='$data[player_id]'")) == 0) {
+    		mysql_query("INSERT INTO mod_catcher_$store (player_id,assist_player_id,match_id,team_id,time) VALUES ($data[player_id],$data[assist_player_id],$data[match_id],$data[team_id],$data[time])");
+        $output["dirty"] = true;        
+      }       
       update_match($data["match_id"]);
   	break;
     case "players":

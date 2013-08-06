@@ -147,27 +147,20 @@ Ext.define('catcher.controller.MatchController', {
             player_id : session.score_player_id,
             match_id : session.match_id,
             assist_player_id : assist_player_id,
-            time : Date.now() / 1000
+            time : Math.round(+new Date()/1000)
         });        
         
                     
         
         // přidat bod do interní DB, synchronizovat a označit jako zpracované
-        Ext.Viewport.setMasked({
-            xtype : 'loadmask',
-            message : 'Ukládám bod',
-            indicator : true
-        });
           points.clearFilter();
-          point.setDirty(true);          
+          point.setDirty();          
           points.add(point);                  
-          points.sync();
-          point.setDirty(false);
+          points.sync();         
                                     
           
           this.updateMatchPoints(point.get("match_id"));
-          this.updateMatchInfo(point.get("match_id"))
-        Ext.Viewport.setMasked(false);                                                                                                                               
+          this.updateMatchInfo(point.get("match_id"));                                                                                                                               
     },
     
     updateMatchInfo : function(match_id){
@@ -260,9 +253,9 @@ Ext.define('catcher.controller.MatchController', {
     fillMatchDetailContent : function(match) {
         this.getMatchDetail().query("button[name=scoreHome]")[0].setText(new String(match.score_home));
         this.getMatchDetail().query("button[name=scoreAway]")[0].setText(new String(match.score_away));
-//         getTeamScore(match.match_id,match.home_id);
-//         getTeamScore(match.match_id,match.away_id);
-//         Ext.getStore("Points").clearFilter();
+        getTeamScore(match.match_id,match.home_id);
+        getTeamScore(match.match_id,match.away_id);
+        Ext.getStore("Points").clearFilter();
     }
 });
 

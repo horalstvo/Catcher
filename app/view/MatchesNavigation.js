@@ -24,26 +24,28 @@ Ext.define("catcher.view.MatchesNavigation", {
                 handler : function() {                        
                     // window.location.reload();
                     var matchList = Ext.getCmp("matchesList");
+                    var scoreList = Ext.getCmp("scoreList");
+                    var matchDetail = Ext.getCmp("matchDetail");
+                    var points = Ext.getStore("Points");
+                    points.sync();
+                    
+                    var matches = Ext.getStore("Matches");
+                    var match_id = Ext.getStore("Session").findRecord("uuid", Ext.device.Device.uuid).match_id;
+                    
                     if (typeof matchList != 'undefined') {
                         matchList.getStore().load();
                     }
 
-                    var scoreList = Ext.getCmp("scoreList");
-                    if (typeof scoreList != 'undefined') {
-                        Ext.Viewport.setMasked({
-                          xtype : 'loadmask',
-                          message : 'Aktualizuji data z www.frisbee.cz',
-                          indicator : true
-                        });                                          
-                        scoreList.getStore().load(function(){
-                          Ext.Viewport.setMasked(false);
-                        });
+                    
+                    if (typeof scoreList != 'undefined') {                                          
+                      points.clearFilter();
+                      points.load(function(){
+                        scoreList.getStore().load();
+                      });                                                                  
                     }
 
-                    var matchDetail = Ext.getCmp("matchDetail");
-                    var match_id = Ext.getStore("Session").findRecord("uuid", Ext.device.Device.uuid).match_id;                                       
-                    if (typeof match_id != 'undefined' && typeof matchDetail != 'undefined') {
-                        var matches = Ext.getStore("Matches");
+                                                           
+                    if (typeof match_id != 'undefined' && typeof matchDetail != 'undefined') {                        
                         Ext.Viewport.setMasked({
                           xtype : 'loadmask',
                           message : 'Aktualizuji data z www.frisbee.cz',
