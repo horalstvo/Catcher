@@ -1,8 +1,7 @@
 Ext.define("catcher.view.MatchesNavigation", {
     extend : "Ext.navigation.View",
     xtype : "matchesNavigation",
-    requires : [ "catcher.view.MatchDetail", "catcher.view.MatchesList", "catcher.view.AddPointDetail", "catcher.view.ScoreList",
-            "catcher.view.MatchPlayerList" ],
+    requires : [ "catcher.view.MatchDetail", "catcher.view.MatchesList", "catcher.view.AddPointDetail", "catcher.view.ScoreList", "catcher.view.MatchPlayerList" ],
     config : {
         title : "Zápasy",
         iconCls : "time",
@@ -22,7 +21,6 @@ Ext.define("catcher.view.MatchesNavigation", {
                 name : "refreshConfirm",
                 id : "refreshStores",
                 handler : function() {                        
-                    // window.location.reload();
                     var matchList = Ext.getCmp("matchesList");
                     var scoreList = Ext.getCmp("scoreList");
                     var matchDetail = Ext.getCmp("matchDetail");
