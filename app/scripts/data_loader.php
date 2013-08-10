@@ -6,6 +6,7 @@ header("Access-Control-Allow-Methods: OPTIONS,GET,POST,PUT,DELETE");
 include "../scripts/paths.php";
 include $path_conf."config.php";
 include $path_lib."dbconnect.php";
+include $path_lib."library.php";
 
 function convert($string){
 	return iconv("cp1250","utf-8",$string);;
@@ -39,11 +40,25 @@ $cols_app["players"]["player_id"] = "player_id";
 $cols_app["matches"]["match_id"] = "match_id";
 $cols_app["points"]["point_id"] = "point_id";
 
-function update_match($match_id){
-  $data = mysql_fetch_array(mysql_query("SELECT home_id, away_id FROM mod_catcher_matches WHERE id='$match_id'"));
-  $score_home = mysql_fetch_array(mysql_query("SELECT count(id) as score FROM mod_catcher_points WHERE match_id = '$match_id' AND team_id='$data[home_id]'"));
-  $score_away = mysql_fetch_array(mysql_query("SELECT count(id) as score FROM mod_catcher_points WHERE match_id = $match_id AND team_id='$data[away_id]'"));
-  mysql_query("UPDATE mod_catcher_matches SET score_home = '$score_home[score]', score_away = '$score_away[score]' WHERE id = $match_id");
+// pokud $match_id = false, updatuje se celý turnaj
+function update_match($match_id = false){
+  if($match_id == false){
+    global $tournament_id,$tab5;
+    $result = mysql_query("SELECT id FROM $tab5 WHERE tournament_id = '$tournament_id'");
+    $matchesToUpdate = array();
+    while($data = mysql_fetch_array($result)){
+      $matchesToUpdate[]=$data["id"];
+    }
+  }else{
+    $matchesToUpdate[]=$match_id;
+  }  
+  
+  foreach($matchesToUpdate as $match_id){    
+    $data = mysql_fetch_array(mysql_query("SELECT home_id, away_id FROM mod_catcher_matches WHERE id='$match_id'"));
+    $score_home = mysql_fetch_array(mysql_query("SELECT count(id) as score FROM mod_catcher_points WHERE match_id = '$match_id' AND team_id='$data[home_id]'"));
+    $score_away = mysql_fetch_array(mysql_query("SELECT count(id) as score FROM mod_catcher_points WHERE match_id = $match_id AND team_id='$data[away_id]'"));
+    mysql_query("UPDATE mod_catcher_matches SET score_home = '$score_home[score]', score_away = '$score_away[score]' WHERE id = $match_id");
+  }
 }
 
 if($method == "POST"){ // insert dat ve storu
@@ -54,11 +69,13 @@ if($method == "POST"){ // insert dat ve storu
 	}
   switch($store){
     case "points":
-      // zahazujeme bod, pokud už tam je, což by se nemìlo stát a chce to nìjak logovat, jestli se tak ještì bude dít    
+      // zahazujeme bod, pokud už tam je, což by se nemìlo stát, prùbìžnì logujeme    
       if(mysql_num_rows(mysql_query("SELECT * FROM mod_catcher_$store WHERE time = '$data[time]' AND match_id='$data[match_id]' AND team_id='$data[team_id]' AND player_id='$data[player_id]'")) == 0) {
     		mysql_query("INSERT INTO mod_catcher_$store (player_id,assist_player_id,match_id,team_id,time) VALUES ($data[player_id],$data[assist_player_id],$data[match_id],$data[team_id],$data[time])");
         $output["dirty"] = true;        
-      }       
+      }else{
+        debuguj("Pokus o pøidání duplikátu: ".json_encode($data),"catcher");
+      }             
       update_match($data["match_id"]);
   	break;
     case "players":
@@ -123,6 +140,7 @@ if($method == "GET"){ // stažení dat, rùzné prùbìžné aktualizaèní požadavky
           $vysledek = mysql_query("SELECT * FROM $tab5 WHERE id = '".$_GET["id"]."'");
         }else{
           // standardní naèítání dat
+          update_match();
           $vysledek = mysql_query("SELECT * FROM $tab5 WHERE $t_cond ORDER BY time");
         }        
       break;
@@ -161,10 +179,10 @@ if($method == "GET"){ // stažení dat, rùzné prùbìžné aktualizaèní požadavky
           $match_info = mysql_fetch_array(mysql_query("SELECT home_id, away_id FROM mod_catcher_matches WHERE id = '$data[match_id]'"));
           $score["score_home"] = mysql_fetch_array(mysql_query("SELECT count(id) as score FROM mod_catcher_points WHERE team_id='$match_info[home_id]' AND match_id='$data[match_id]' AND time <= $data[time]"));
           $score["score_away"] = mysql_fetch_array(mysql_query("SELECT count(id) as score FROM mod_catcher_points WHERE team_id='$match_info[away_id]' AND match_id='$data[match_id]' AND time <= $data[time]"));
+          mysql_query("UPDATE mod_catcher_points SET score_home = '".$score["score_home"]["score"]."', score_away = '".$score["score_away"]["score"]."' WHERE id = '".$data["id"]."'");
           $tmp["score_home"] = $score["score_home"]["score"];        
           $tmp["score_away"] = $score["score_away"]["score"];
         }
-//         print_r($tmp);
   	  	$output[] = $tmp;
   		}
     }

@@ -7,7 +7,8 @@ Ext.define('catcher.controller.MatchController', {
             matchDetail : "matchDetail",
             addPointDetail : "addPointDetail",
             editPointDetail : "editPointDetail",
-            scoreList : "scoreList"
+            scoreList : "scoreList",
+            MatchDetailSettings: "matchDetailSettings"
         },
         control : {
             "matchesList" : {
@@ -54,6 +55,7 @@ Ext.define('catcher.controller.MatchController', {
         var session = Ext.getStore("Session").findRecord("uuid", Ext.device.Device.uuid);
         session.match_id = match.match_id;
         this.fillMatchDetailContent(match);
+        this.fillMatchDetailSettings(match);
     },
 
     addPointHome : function() {
@@ -142,25 +144,43 @@ Ext.define('catcher.controller.MatchController', {
         var matches = Ext.getStore("Matches");
 
         var point = Ext.create("catcher.model.Point", {
-            point_id : false,
             team_id : session.score_team_id,
             player_id : session.score_player_id,
             match_id : session.match_id,
             assist_player_id : assist_player_id,
             time : Math.round(+new Date()/1000)
-        });        
+        });
         
-                    
-        
+        // nezbytné kvůli pomalému připojení, bez callbacku se nestihne stáhnout aktualizovaný points store a pak je celá naše režije v pr...
+        Ext.data.Store.prototype.syncWithListener = function(onWriteComplete, syncMethod) {
+
+          this.on('write', onWriteComplete, this, {single:true});
+  
+          var syncResult = syncMethod ? syncMethod.apply(this) : this.sync();
+  
+          if (syncResult.added.length === 0 &&
+          syncResult.updated.length === 0 &&
+          syncResult.removed.length === 0) {
+  
+              this.removeListener('write', onWriteComplete, this, {single:true});
+              onWriteComplete(this);    
+          }
+  
+          return syncResult;
+        };
+                                                            
         // přidat bod do interní DB, synchronizovat a označit jako zpracované
-          points.clearFilter();
           point.setDirty();          
-          points.add(point);                  
-          points.sync();         
-                                    
-          
-          this.updateMatchPoints(point.get("match_id"));
-          this.updateMatchInfo(point.get("match_id"));                                                                                                                               
+          points.add(point);
+          Ext.Viewport.setMasked({
+            xtype: "loadmask",
+            message : "Ukládám bod na frisbee.cz"
+          });                  
+          points.syncWithListener(function(){
+            var controller = catcher.app.getController("MatchController");            
+            controller.updateMatchPoints(point.get("match_id"));            
+            controller.updateMatchInfo(point.get("match_id"));
+          });                                                                                                                                                                                                
     },
     
     updateMatchInfo : function(match_id){
@@ -179,7 +199,9 @@ Ext.define('catcher.controller.MatchController', {
     updateMatchPoints : function(match_id){
       var points = Ext.getStore("Points");
       points.getProxy().setExtraParam("match_id",match_id);
-      points.load();
+      points.load(function(){
+        Ext.Viewport.setMasked(false);
+      });
       points.getProxy().setExtraParams({});
     },
 
@@ -256,7 +278,17 @@ Ext.define('catcher.controller.MatchController', {
         getTeamScore(match.match_id,match.home_id);
         getTeamScore(match.match_id,match.away_id);
         Ext.getStore("Points").clearFilter();
-    }
+    },
+    
+    fillMatchDetailSettings: function(match){
+      this.getMatchDetailSettings().setValues({
+        match_id: match.match_id,
+        field:match.field,
+        date:match.time,
+        time:match.time,                
+        length:match.length,
+      });
+    }    
 });
 
 function fullName(player) {    
@@ -351,16 +383,3 @@ function createPlayerOption(player) {
         value : player.player_id
     };
 }
-
-// function getNewId(store) {
-//     store.clearFilter();
-//     var id = 0;
-// 
-//     store.each(function(item, index, length) {
-//         var itemId = parseInt(item.get("point_id"));
-//         if (itemId > id) {
-//             id = itemId;
-//         }
-//     });
-//     return ++id;
-// }

@@ -1,8 +1,9 @@
 Ext.define("catcher.view.MatchDetail", {
     extend : "Ext.tab.Panel",
-    xtype : "matchDetail",        
+    xtype : "matchDetail",            
 
     config : {
+      id : "matchDetail",
       tabBarPosition : "bottom",
         items:[
           {xtype: "matchDetailCounter"},
@@ -21,7 +22,7 @@ Ext.define("catcher.view.MatchDetail", {
               var pressedCls = "x-button-pressed";         
               c.removeCls(pressedCls);
             });
-          }
+          },
       },
     }
 });

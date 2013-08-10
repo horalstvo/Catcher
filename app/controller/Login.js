@@ -39,8 +39,7 @@ Ext.define('catcher.controller.Login', {
     doLogin : function() {
         Ext.Viewport.setMasked({
             xtype : 'loadmask',
-            message : 'Přihlašuji',
-            indicator : true
+            message : 'Přihlašuji a načítám data turnaje'
         });
         var form = this.getLoginForm();
         values = form.getValues(true, true);

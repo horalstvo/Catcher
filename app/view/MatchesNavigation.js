@@ -41,13 +41,11 @@ Ext.define("catcher.view.MatchesNavigation", {
                         scoreList.getStore().load();
                       });                                                                  
                     }
-
                                                            
                     if (typeof match_id != 'undefined' && typeof matchDetail != 'undefined') {                        
                         Ext.Viewport.setMasked({
                           xtype : 'loadmask',
                           message : 'Aktualizuji data z www.frisbee.cz',
-                          indicator : true
                         });                                                
                         matches.load(function(){
                           var match = matches.findRecord("match_id", match_id, false, false, false, true).data;

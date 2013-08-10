@@ -2,7 +2,7 @@ Ext.define("catcher.view.PlayersDetail",{
 	extend: "Ext.form.Panel",
 	xtype: "playersDetail",
 	id: "playersDetail",				
-	requires: ["Ext.form.FieldSet","Ext.form.Select","Ext.field.Hidden"],
+	requires: ["Ext.form.FieldSet","Ext.form.Select","Ext.field.Hidden","Ext.field.Number"],
 	
 	config:{
 		styleHtmlContent: true,
@@ -15,10 +15,10 @@ Ext.define("catcher.view.PlayersDetail",{
 				
 				items:	[
 					{
-						xtype: "selectfield",
+						xtype: "numberfield",
 						label: "Číslo hráče",
 						name: "number",
-						options: []
+						value:""
 					},
           {
 						xtype: "textfield",

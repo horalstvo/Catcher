@@ -4,7 +4,7 @@ Ext.define("catcher.view.MatchDetailScore",{
 	requires: ["Ext.form.FieldSet","Ext.form.Select","Ext.field.Hidden"],
 	
 	config:{
-    title : "Skóre a spirit",
+    title : "Skóre + spirit",
     iconCls : "compose",
     id: "matchDetailScore",
 		styleHtmlContent: true,
@@ -13,7 +13,7 @@ Ext.define("catcher.view.MatchDetailScore",{
 			{
 				xtype: "fieldset",
 				title: "Výsledné skóre a spirit",
-				instructions: "",
+				instructions : "Po konci zápasu lze přímo zapsat Spirit, případně natvrdo upravit skóre. Pokud se zadá skóre jiné, než je pomocí skórovacího systémů s hráči, budou další body doplněny anonymními hráči.",
 				
 				items:	[
 // 					{
