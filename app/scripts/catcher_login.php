@@ -17,10 +17,16 @@ $vysledek = mysql_query("select * from mod_catcher_tournaments where id = '$tour
 
 if(mysql_num_rows($vysledek) == 1 && isset($callback)){
 	$data = mysql_fetch_array($vysledek);
-    header('Content-Type: text/javascript');
-    echo $callback . '({"success":true, "tournament_id":"' . $data["id"] . '", "tournament_name":"' . $data["name"] . '"});';
+    $output["success"]=true;
+    $output["tournament_id"]= $data["id"];
+    $output["tournament_name"]= $data["name"];
+    $output["fields"]= $data["fields"];
 }else{
-	echo '{"success":false,"message":"chybné heslo či neexistují turnaj"}';
+  $output["success"]=false;
+  $output["tournament_id"]="chybné heslo či neexistují turnaj";
 }
+
+header('Content-Type: text/javascript');
+echo $callback . '(' . json_encode($output) . ');';
 
 ?>

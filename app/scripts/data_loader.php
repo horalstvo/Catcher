@@ -29,16 +29,26 @@ if(isset($_GET["tournament_id"])) $tournament_id = $_GET["tournament_id"];
 $method = $_SERVER['REQUEST_METHOD'];
 if(isset($_REQUEST['callback'])) $callback = $_REQUEST['callback'];
 
-$cols["tournaments"] = array("tournament_id"=>"id","tournament_name"=>"name");
+$cols["tournaments"] = array("tournament_id"=>"id","tournament_name"=>"name","fields"=>"fields");
 $cols["teams"] = array("team_id"=>"id","name_short"=>"name_short","name_full"=>"name_full");
 $cols["players"] = array("player_id"=>"id","name"=>"name","surname"=>"surname","number"=>"number","team"=>"team","nick"=>"nick");
-$cols["matches"] = array("match_id"=>"id","tournament_id"=>"tournament_id","home_id"=>"home_id","home_name_full"=>"home_name_full","home_name_short"=>"home_name_short","away_name_full"=>"away_name_full","away_name_short"=>"away_name_short","away_id"=>"away_id","score_home"=>"score_home","score_away"=>"score_away","spirit_home"=>"spirit_home","spirit_away"=>"spirit_away","field"=>"field","time"=>"time");
+$cols["matches"] = array("match_id"=>"id","tournament_id"=>"tournament_id","home_id"=>"home_id","home_name_full"=>"home_name_full","home_name_short"=>"home_name_short","away_name_full"=>"away_name_full","away_name_short"=>"away_name_short","away_id"=>"away_id","score_home"=>"score_home","score_away"=>"score_away","spirit_home"=>"spirit_home","spirit_away"=>"spirit_away","field"=>"field","time"=>"time","time_start"=>"time_start","time_end"=>"time_end","length"=>"length");
 $cols["points"] = array("point_id"=>"id","team_id"=>"team_id","player_id"=>"player_id","assist_player_id"=>"assist_player_id","match_id"=>"match_id","time"=>"time");
 
 $cols_app = $cols;
 $cols_app["players"]["player_id"] = "player_id";
 $cols_app["matches"]["match_id"] = "match_id";
 $cols_app["points"]["point_id"] = "point_id";
+
+function update_match_settings($data){
+  global $tab5,$output;
+  if($data["time_start"] == 1) $data["time_start"] = time();
+  if($data["time_end"] == 1) $data["time_end"] = time();
+  mysql_query("UPDATE $tab5 SET field = '$data[field]', length = '$data[length]', time = '$data[time]' WHERE id = $data[match_id]");
+//   , time_start = (case time_start=0 then time_start=$data[time_start] else time_start=time_start), time_end = (case time_end=0 then time_end=$data[time_end] else time_end=time_end) 
+//   echo "UPDATE $tab5 SET field = '$data[field]', length = '$data[length]', time = '$data[time]', time_start = (case time_start==0 then time_start=$data[time_start] else time_start=time_start)IF(time_start<:$data[time_start],:time_start,$data[time]), time_end = (case time_end==0 then time_end=$data[time_end] else time_end=time_end) WHERE id = $data[match_id]";
+  $output["success"] = true; 
+}
 
 // pokud $match_id = false, updatuje se celý turnaj
 function update_match($match_id = false){
@@ -97,7 +107,8 @@ if($method == "PUT"){ // update dat ve storu
 		break;
 		
 		case "matches":
-      update_match($data["match_id"]);      			
+      update_match($data["match_id"]);
+      update_match_settings($data);      			
 		break;
 		
 		case "points":
@@ -157,7 +168,7 @@ if($method == "GET"){ // stažení dat, rùzné prùbìžné aktualizaèní požadavky
         $vysledek = mysql_query("SELECT $tab2.* FROM $tab2 LEFT JOIN $tab4 ON $tab4.player_id=$tab2.id WHERE $tab4.$t_cond $skryte");
       break;
       case "tournaments":
-        $vysledek = mysql_query("SELECT * FROM mod_catcher_tournaments ORDER BY name");
+        $vysledek = mysql_query("SELECT * FROM mod_catcher_tournaments WHERE active=1 ORDER BY name");
       break;
     }						
 		
