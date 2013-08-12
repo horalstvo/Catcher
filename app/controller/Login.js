@@ -85,7 +85,6 @@ Ext.define('catcher.controller.Login', {
                 } else {
                     Ext.Viewport.setMasked(false);
                     Ext.Msg.alert("Nepřihlášen", response.message);
-                    console.log("failure", response);
                 }
             }
         });

@@ -22,7 +22,7 @@ Ext.define("catcher.view.MatchDetail", {
               var pressedCls = "x-button-pressed";         
               c.removeCls(pressedCls);
             });
-          },
+          }          
       },
     }
 });

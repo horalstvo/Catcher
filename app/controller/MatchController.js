@@ -8,7 +8,7 @@ Ext.define('catcher.controller.MatchController', {
             addPointDetail : "addPointDetail",
             editPointDetail : "editPointDetail",
             scoreList : "scoreList",
-            MatchDetailSettings: "matchDetailSettings"
+            matchDetailSettings: "matchDetailSettings",
         },
         control : {
             "matchesList" : {
@@ -42,6 +42,13 @@ Ext.define('catcher.controller.MatchController', {
             "editPointDetail button[name=editConfirm]" : {
                 tap : "updatePoint"
             },
+            "matchDetailSettings button[name=submit]":{
+                tap: "updateMatchSettings"
+            }
+        },
+        listeners: {
+          initialize: function(){            
+          }
         }
     },
 
@@ -151,23 +158,17 @@ Ext.define('catcher.controller.MatchController', {
             time : Math.round(+new Date()/1000)
         });
         
-        // nezbytné kvůli pomalému připojení, bez callbacku se nestihne stáhnout aktualizovaný points store a pak je celá naše režije v pr...
         Ext.data.Store.prototype.syncWithListener = function(onWriteComplete, syncMethod) {
-
-          this.on('write', onWriteComplete, this, {single:true});
-  
+          this.on('write', onWriteComplete, this, {single:true});  
           var syncResult = syncMethod ? syncMethod.apply(this) : this.sync();
-  
           if (syncResult.added.length === 0 &&
           syncResult.updated.length === 0 &&
-          syncResult.removed.length === 0) {
-  
-              this.removeListener('write', onWriteComplete, this, {single:true});
-              onWriteComplete(this);    
+          syncResult.removed.length === 0) {  
+            this.removeListener('write', onWriteComplete, this, {single:true});
+            onWriteComplete(this);    
           }
-  
           return syncResult;
-        };
+        };                
                                                             
         // přidat bod do interní DB, synchronizovat a označit jako zpracované
           point.setDirty();          
@@ -280,7 +281,7 @@ Ext.define('catcher.controller.MatchController', {
         Ext.getStore("Points").clearFilter();
     },
     
-    fillMatchDetailSettings: function(match){
+    fillMatchDetailSettings: function(match){      
       this.getMatchDetailSettings().setValues({
         match_id: match.match_id,
         field:match.field,
@@ -288,7 +289,62 @@ Ext.define('catcher.controller.MatchController', {
         time:match.time,                
         length:match.length,
       });
-    }    
+      var session = Ext.getStore("Session").findRecord("uuid", Ext.device.Device.uuid);
+      var tournament_data = Ext.getStore("Tournaments").findRecord("tournament_id",session.get("tournament_id"),false,false,true);
+      var fields = tournament_data.get("fields").split("*");
+      var length = fields.length,
+      element = null;
+      var fields2push = new Array();
+      for (var i = 0; i < length; i++) {
+        element = fields[i];
+        fields2push.push({
+          text:element,
+          value:element
+        });         
+      }
+      this.getMatchDetailSettings().query("selectfield[name=field]")[0].setOptions(fields2push).setValue(match.field);            
+    },
+    
+    updateMatchSettings : function(){
+      Ext.Viewport.setMasked({
+          xtype : 'loadmask',
+          message : 'Ukládám informace o zápase'
+      });
+      var form = this.getMatchDetailSettings();
+      values = form.getValues(true, true);
+      
+      var matches = Ext.getStore("Matches");
+      var match = matches.findRecord("match_id",values.match_id,false,false,true);
+      match.set({
+//         time_start: values.time_start,
+//         time_end: values.time_end,
+        length: values.length,
+        field: values.field,
+//         time: values.time,  
+      });
+      
+      match.setDirty();
+      
+      matches.getProxy().setExtraParam("match_id",values.match_id);      
+      
+      
+      Ext.data.Store.prototype.syncWithListener = function(onWriteComplete, syncMethod) {
+        this.on('write', onWriteComplete, this, {single:true});  
+        var syncResult = syncMethod ? syncMethod.apply(this) : this.sync();
+        if (syncResult.added.length === 0 &&
+        syncResult.updated.length === 0 &&
+        syncResult.removed.length === 0) {  
+          this.removeListener('write', onWriteComplete, this, {single:true});
+          onWriteComplete(this);    
+        }
+        return syncResult;
+      };
+      
+      matches.syncWithListener(function(){
+        Ext.Msg.alert("Zápas aktualizován a nahrán na server.");
+        Ext.Viewport.setMasked(false);
+      });                                  
+    }
 });
 
 function fullName(player) {    

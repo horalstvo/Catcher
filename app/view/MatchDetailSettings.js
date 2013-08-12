@@ -1,13 +1,13 @@
 Ext.define("catcher.view.MatchDetailSettings",{
 	extend: "Ext.form.Panel",
 	xtype: "matchDetailSettings",					
-	requires: ["Ext.form.FieldSet","Ext.form.Select","Ext.field.Hidden","Ext.field.DatePicker","Ext.field.Toggle",,"Ext.field.Number"],
+	requires: ["Ext.form.FieldSet","Ext.form.Select","Ext.field.Hidden","Ext.field.DatePicker","Ext.field.Toggle","Ext.field.Number","Ext.ux.DateTimePicker"],
 	
 	config:{
     title : "Nastavení",
     iconCls : "settings",
     id: "matchDetailSettings",
-		styleHtmlContent: true,    
+// 		styleHtmlContent: true,    
 		
 		items:[
 			{
@@ -38,19 +38,12 @@ Ext.define("catcher.view.MatchDetailSettings",{
 						xtype: "numberfield",
 						label: "Délka utkání",
 						name: "length",
-					},
+					},          
           {
-						xtype: "datepickerfield",
-						label: "Čas utkání",
-            dateFormat:"H:i",
+						xtype: "datetimepickerfield",
+            dateTimeFormat: "j.n.Y H:i",
+						label: "Datum a čas",
 						name: "time",
-						value: ""
-					},
-          {
-						xtype: "datepickerfield",
-            dateFormat: "j.n.Y",
-						label: "Datum",
-						name: "date",
 						value: ""
 					},
 					{
@@ -62,12 +55,12 @@ Ext.define("catcher.view.MatchDetailSettings",{
 			},
 			{
 				xtype: "button",
+        name: "submit",
 				text: "Uložit",
 				ui: "confirm"
 			}			
 		],
 		listeners: {
-							 
 		},														
 	}				
 });
