@@ -8,7 +8,8 @@ Ext.define("catcher.view.MatchesList", {
         styleHtmlContent : true,
         style : 'font-size : 1.4em',
         id : "matchesList",
-        items : [],
+        items : [          
+        ],
 
         store : "Matches",
         sorters: "time",
@@ -17,6 +18,7 @@ Ext.define("catcher.view.MatchesList", {
         onItemDisclosure : true,
         listeners : {
             painted : function() {
+              Ext.getCmp("matchesNavigation").query("button[filtr=true]").forEach(function(el){el.show()});
                 var store = Ext.getStore("Matches");
                 store.getProxy().setExtraParams({});
                 store.clearFilter();
@@ -26,6 +28,9 @@ Ext.define("catcher.view.MatchesList", {
                 });                
                 Ext.getCmp("tournament").getTabBar().show();
                 Ext.getCmp("matchesList").deselectAll();
+            },
+            initialize:function(){
+              
             }
         }
     },

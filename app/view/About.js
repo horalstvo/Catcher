@@ -17,7 +17,7 @@ Ext.define("catcher.view.About",{
 		],
 		
 		html: [
-			"<h2>Maribor build verze 0.9</h2> <p>Pre-alpha verze aplikace, určeno pro testování skórování vybraných zápasů</p><p>Jestli něco nefunguje, tak nahlásit TM (Kačer, Ondra)</p> <p>Nápady a podněty tamtéž </p>"
+			"<h2>Mix kvalifikace verze 0.9</h2> <p>Beta verze aplikace, určeno pro testování skórování všech zápasů</p><p>Jestli něco nefunguje, tak nahlásit Kačerovi TM případně Ondrovi TM</p> <p>Nápady a podněty tamtéž </p>"
 		].join("")		
 	}				
 });

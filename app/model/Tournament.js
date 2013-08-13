@@ -4,7 +4,8 @@ Ext.define('catcher.model.Tournament', {
 	  idProperty: 'item_id',
 	    fields: [
 	      {name: 'tournament_id', type: 'int'},
-	      {name: 'tournament_name', type: 'string'}
+	      {name: 'tournament_name', type: 'string'},
+        {name: 'fields', type: 'string'}
 	  ]
 	}
 });

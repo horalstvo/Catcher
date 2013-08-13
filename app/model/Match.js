@@ -16,7 +16,11 @@ Ext.define('catcher.model.Match', {
 	      {name: 'spirit_home', type: 'int'},
 	      {name: 'spirit_away', type: 'int'},
 	      {name: 'field', type: 'int'},
-	      {name: 'time', type: 'date', dateFormat: "timestamp"}
+	      {name: 'time', type: 'date', dateFormat: "timestamp"},
+        {name: 'time_end', type: 'date', dateFormat: "timestamp"},
+        {name: 'time_start', type: 'date', dateFormat: "timestamp"},
+        {name: 'length', type: 'int'},
+        {name: 'in_play', type: 'boolean'}
 	  ]
 	}
 });

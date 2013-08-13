@@ -49,16 +49,6 @@ Ext.define('catcher.controller.Evidence', {
 
     showPlayer : function(list, record) {
 
-        // nastavit options pro select = číslo hráče
-        i = 0;
-        var numbers = new Array();
-        while (i < 100) {
-            numbers.push({
-                text : i,
-                value : i
-            });
-            i++;
-        }
 
         // naplnit hráčovu kartičku
         if(typeof record.raw == "undefined") record.raw = record.data.data;
@@ -67,7 +57,8 @@ Ext.define('catcher.controller.Evidence', {
             name : record.raw.name,
             surname : record.raw.surname,
             player_id : record.raw.player_id,
-            nick : record.raw.nick
+            nick : record.raw.nick,
+            number: record.raw.number
         });
 
         // nastavit options pro select = tým
@@ -81,7 +72,6 @@ Ext.define('catcher.controller.Evidence', {
 
         // nastavit selected hodnoty pro Tým a Číslo hráče
         this.getKarticka().query("selectfield[name=team]")[0].setOptions(teams).setValue(record.raw.team);
-        this.getKarticka().query("selectfield[name=number]")[0].setOptions(numbers).setValue(record.raw.number);
     },
 
     sestavEvidenci : function(team_id) {
