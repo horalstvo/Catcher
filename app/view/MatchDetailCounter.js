@@ -47,28 +47,6 @@ Ext.define("catcher.view.MatchDetailCounter", {
             name : "addPointAway",
             text : "+",
         } ],
-<<<<<<< HEAD
-=======
-    }, {
-        xtype : "segmentedbutton",
-        layout : {
-            align : "stretchmax",
-            pack : "center",
-            type : "hbox"
-        },
-        style : "font-size: 5em; margin-top : 20px",
-        items : [ {
-            xtype : "button",
-            flex : 1,
-            name : "deletePointHome",
-            text : "-",
-        }, {
-            xtype : "button",
-            flex : 1,
-            name : "deletePointAway",
-            text : "-",
-        } ],
->>>>>>> 50305f36381b3eff457eddabb990ec355c3594d3
     }]
   }
 });
