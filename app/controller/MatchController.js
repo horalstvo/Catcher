@@ -53,7 +53,7 @@ Ext.define('catcher.controller.MatchController', {
     },
     
     showMatchDetail : function(list, record) {
-        Ext.getCmp("matchesNavigation").query("button[filtr=true]").forEach(function(el){el.hide()}); // skrytí filtrovacích tlačítek
+        Ext.getCmp("matchesNavigation").query("button[navigation_only=true]").forEach(function(el){el.hide()}); // skrytí filtrovacích tlačítek
         var match = record.data;
         this.getMatchesNavigation().push({
             xtype : "matchDetail",
@@ -157,19 +157,7 @@ Ext.define('catcher.controller.MatchController', {
             match_id : session.match_id,
             assist_player_id : assist_player_id,
             time : Math.round(+new Date()/1000)
-        });
-        
-        Ext.data.Store.prototype.syncWithListener = function(onWriteComplete, syncMethod) {
-          this.on('write', onWriteComplete, this, {single:true});  
-          var syncResult = syncMethod ? syncMethod.apply(this) : this.sync();
-          if (syncResult.added.length === 0 &&
-          syncResult.updated.length === 0 &&
-          syncResult.removed.length === 0) {  
-            this.removeListener('write', onWriteComplete, this, {single:true});
-            onWriteComplete(this);    
-          }
-          return syncResult;
-        };                
+        });                      
                                                             
         // přidat bod do interní DB, synchronizovat a označit jako zpracované
           point.setDirty();          
@@ -308,7 +296,12 @@ Ext.define('catcher.controller.MatchController', {
       
       var session = Ext.getStore("Session").findRecord("uuid", Ext.device.Device.uuid);
       var tournament_data = Ext.getStore("Tournaments").findRecord("tournament_id",session.get("tournament_id"),false,false,true);
-      var fields = tournament_data.get("fields").split("*");
+      var fields2push = this.composeFields(tournament_data.get("fields"));      
+      this.getMatchDetailSettings().query("selectfield[name=field]")[0].setOptions(fields2push).setValue(match.field);            
+    },
+    
+    composeFields:function(input){
+      var fields = input.split("*");
       var length = fields.length,
       element = null;
       var fields2push = new Array();
@@ -319,7 +312,7 @@ Ext.define('catcher.controller.MatchController', {
           value:element
         });         
       }
-      this.getMatchDetailSettings().query("selectfield[name=field]")[0].setOptions(fields2push).setValue(match.field);            
+      return fields2push;
     },
     
     updateMatchSettings : function(){
@@ -342,21 +335,7 @@ Ext.define('catcher.controller.MatchController', {
       
       match.setDirty();
       
-      matches.getProxy().setExtraParam("match_id",values.match_id);      
-      matches.getProxy().setExtraParam("test","xxx");
-      
-      
-      Ext.data.Store.prototype.syncWithListener = function(onWriteComplete, syncMethod) {
-        this.on('write', onWriteComplete, this, {single:true});  
-        var syncResult = syncMethod ? syncMethod.apply(this) : this.sync();
-        if (syncResult.added.length === 0 &&
-        syncResult.updated.length === 0 &&
-        syncResult.removed.length === 0) {  
-          this.removeListener('write', onWriteComplete, this, {single:true});
-          onWriteComplete(this);    
-        }
-        return syncResult;
-      };
+      matches.getProxy().setExtraParam("match_id",values.match_id);                 
       
       matches.syncWithListener(function(){
         Ext.Msg.alert("OK","Informace o zápasu aktualizovány.");

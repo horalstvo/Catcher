@@ -1,7 +1,7 @@
 Ext.define("catcher.view.MatchesNavigation", {
     extend : "Ext.navigation.View",
     xtype : "matchesNavigation",
-    requires : [ "catcher.view.MatchDetail", "catcher.view.MatchesList", "catcher.view.AddPointDetail", "catcher.view.ScoreList", "catcher.view.MatchPlayerList" ],
+    requires : [ "catcher.view.MatchDetail", "catcher.view.MatchesList", "catcher.view.AddPointDetail", "catcher.view.ScoreList", "catcher.view.MatchPlayerList", "catcher.view.EditorPanel"],
     config : {
         title : "Zápasy",
         iconCls : "time",
@@ -14,28 +14,22 @@ Ext.define("catcher.view.MatchesNavigation", {
         navigationBar : {
             id:"navigace",
             defaults: {
-                iconMask: true
+                iconMask: true,
             },
             items : [ 
-            {
-              xtype: "button",
-              iconCls:"star",
-              name:"all",
-              align:"left",
-              ui:"decline",
-              filtr:true,
-              handler:function(){
-                this.up("navigationview").showInfo("all","Všechny zápasy");
-              }
-            },
             {
               xtype: "button",
               iconCls:"time",
               name:"next",
               align:"left",
               filtr:true,
+              navigation_only:true,
               handler:function(){
-                this.up("navigationview").showInfo("next","Neodehraná utkání");
+                if(this.getUi() == "decline"){
+                  this.up("navigationview").showInfo("all","Všechna utkání");
+                }else{
+                  this.up("navigationview").showInfo("next","Zatím neodehraná utkání");
+                }
               }
             },
             {
@@ -44,11 +38,43 @@ Ext.define("catcher.view.MatchesNavigation", {
               name:"past",
               align:"left",
               filtr:true,
+              navigation_only:true,
               handler:function(){
-                this.up("navigationview").showInfo("past","Odehrané zápasy");
+                if(this.getUi() == "decline"){
+                  this.up("navigationview").showInfo("all","Všechna utkání");
+                }else{
+                  this.up("navigationview").showInfo("past","Již ukončené zápasy");
+                }
               }
-            }
-            ,{
+            },
+            {
+              xtype: "button",
+              iconCls:"add",
+              name:"new",
+              navigation_only:true,
+              align:"right",
+              handler:function(){                
+                var editorPanel = Ext.getCmp("editorPanel") || new catcher.view.EditorPanel();
+                
+                if(!editorPanel.getParent()){
+                  Ext.Viewport.add(editorPanel);
+                }
+
+                var formPanel = Ext.getCmp('editorPanel');
+                var tournament_id = Ext.getStore("Session").findRecord("uuid", Ext.device.Device.uuid).get("tournament_id");                
+                var tournament = Ext.getStore("Tournaments").findRecord("tournament_id",tournament_id,false,false,true);
+                var fields2push = catcher.app.getController("MatchController").composeFields(tournament.get("fields"));
+                var teams = catcher.app.getController("Evidence").composeTeams();
+                formPanel.query("selectfield[name=field]")[0].setOptions(fields2push);
+                formPanel.query("selectfield[name=home_id]")[0].setOptions(teams);
+                formPanel.query("selectfield[name=away_id]")[0].setOptions(teams);
+                formPanel.setValues({
+                  time:tournament.get("time"),                  
+                });                
+                editorPanel.show();                                                          
+              }
+            },
+            {
                 xtype : "button",                
                 iconCls : "refresh",
                 ui:"confirm",                
@@ -89,7 +115,8 @@ Ext.define("catcher.view.MatchesNavigation", {
                         });                                                  
                     }
                 }
-            } ]
+            }                        
+          ]
         }
     },
     

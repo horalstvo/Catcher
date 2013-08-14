@@ -7,8 +7,8 @@ Ext.define("catcher.view.MatchPlayerList", {
         scrollVertical : true,
         store : "Players",
         itemTpl : "<strong>{nick} #{number}</strong> <small>({surname} {name})</small>",
-        style : 'font-size : 1.2em',
         onItemDisclosure : true,
+        styleHtmlContent: true,
         listeners : {
             activate : function() {
                 this.getStore().sort();

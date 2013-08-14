@@ -36,7 +36,7 @@ if(isset($_GET["tournament_id"])) {
 $method = $_SERVER['REQUEST_METHOD'];
 if(isset($_REQUEST['callback'])) $callback = $_REQUEST['callback'];
 
-$cols["tournaments"] = array("tournament_id"=>"id","tournament_name"=>"name","fields"=>"fields");
+$cols["tournaments"] = array("tournament_id"=>"id","tournament_name"=>"name","fields"=>"fields","time"=>"time");
 $cols["teams"] = array("team_id"=>"id","name_short"=>"name_short","name_full"=>"name_full");
 $cols["players"] = array("player_id"=>"id","name"=>"name","surname"=>"surname","number"=>"number","team"=>"team","nick"=>"nick");
 $cols["matches"] = array("match_id"=>"id","tournament_id"=>"tournament_id","home_id"=>"home_id","home_name_full"=>"home_name_full","home_name_short"=>"home_name_short","away_name_full"=>"away_name_full","away_name_short"=>"away_name_short","away_id"=>"away_id","score_home"=>"score_home","score_away"=>"score_away","spirit_home"=>"spirit_home","spirit_away"=>"spirit_away","field"=>"field","time"=>"time","time_start"=>"time_start","time_end"=>"time_end","length"=>"length","in_play"=>"in_play");
@@ -93,6 +93,14 @@ if($method == "POST"){ // insert dat ve storu
   	$data[$value] = convert2($data[$value]);
 	}
   switch($store){
+    case "matches":      
+      mysql_query("INSERT INTO mod_catcher_$store (tournament_id,home_id,away_id,field,length,time) VALUES ($tournament_id,$data[home_id],$data[away_id],$data[field],'$data[length]',$data[time])");
+      $id = mysql_insert_id();
+      $radek = mysql_fetch_array(mysql_query("SELECT * FROM mod_catcher_$store WHERE id='$id'"));
+      $output["match_id"] = $radek["id"];
+      $output["time"] = $radek["time"];      
+      
+    break;
     case "points":
       // zahazujeme bod, pokud už tam je, což by se nemìlo stát, prùbìžnì logujeme    
       if(mysql_num_rows(mysql_query("SELECT * FROM mod_catcher_$store WHERE time = '$data[time]' AND match_id='$data[match_id]' AND team_id='$data[team_id]' AND player_id='$data[player_id]'")) == 0) {

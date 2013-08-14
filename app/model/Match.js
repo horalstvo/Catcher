@@ -1,7 +1,10 @@
 Ext.define('catcher.model.Match', {
   extend: 'Ext.data.Model',
   config: {
-	  idProperty: 'match_id',
+	  idProperty : 'match_id',
+      identifier : {
+        type: "sequential"
+      },
 	    fields: [
 	    	{name: 'match_id', type: 'int'},
 	    	{name: 'tournament_id', type: 'int'},
@@ -16,9 +19,9 @@ Ext.define('catcher.model.Match', {
 	      {name: 'spirit_home', type: 'int'},
 	      {name: 'spirit_away', type: 'int'},
 	      {name: 'field', type: 'int'},
-	      {name: 'time', type: 'date', dateFormat: "timestamp"},
-        {name: 'time_end', type: 'date', dateFormat: "timestamp"},
-        {name: 'time_start', type: 'date', dateFormat: "timestamp"},
+	      {name: 'time', type: 'date', dateFormat: "timestamp", defaultValue: 1},
+        {name: 'time_end', type: 'date', dateFormat: "timestamp", defaultValue: 1},
+        {name: 'time_start', type: 'date', dateFormat: "timestamp", defaultValue: 1},
         {name: 'length', type: 'int'},
         {name: 'in_play', type: 'boolean'}
 	  ]
