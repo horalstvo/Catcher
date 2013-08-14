@@ -64,16 +64,23 @@ Ext.define('catcher.controller.Evidence', {
         });
 
         // nastavit options pro select = tým
-        var teams = new Array();
-        Ext.getStore("Teams").each(function(radek) {
-            teams.push({
-                text : radek.get("name_full"),
-                value : radek.get("team_id")
-            });
-        });
+        
+        
+        var teams = this.composeTeams();
 
         // nastavit selected hodnoty pro Tým a Číslo hráče
         this.getKarticka().query("selectfield[name=team]")[0].setOptions(teams).setValue(record.raw.team);
+    },
+    
+    composeTeams: function(){
+      var teams = new Array();
+      Ext.getStore("Teams").each(function(radek) {
+        teams.push({
+            text : radek.get("name_full"),
+            value : radek.get("team_id")
+        });        
+      });
+      return teams;
     },
 
     sestavEvidenci : function(team_id) {

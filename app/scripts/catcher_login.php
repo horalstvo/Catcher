@@ -18,9 +18,11 @@ $vysledek = mysql_query("select * from mod_catcher_tournaments where id = '$tour
 if(mysql_num_rows($vysledek) == 1 && isset($callback)){
 	$data = mysql_fetch_array($vysledek);
     $output["success"]=true;
-    $output["tournament_id"]= $data["id"];
-    $output["tournament_name"]= $data["name"];
-    $output["fields"]= $data["fields"];
+    $output["tournament_id"] = $data["id"];
+    $output["tournament_name"] = $data["name"];
+    $output["fields"] = $data["fields"];
+    $output["time"] = $data["time"];
+//     $output["time"] = $data["time"];
 }else{
   $output["success"]=false;
   $output["tournament_id"]="chybné heslo či neexistují turnaj";
