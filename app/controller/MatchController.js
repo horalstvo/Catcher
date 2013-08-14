@@ -296,10 +296,12 @@ Ext.define('catcher.controller.MatchController', {
       runner.on("change",function(field,slider,thumb,newValue,oldValue){      
         Ext.Msg.confirm("Potvrdit akci","Opravdu začal či skončil zápas?",function(response){
           if(response == "yes") {
+            catcher.app.getController("MatchController").updateMatchSettings();
             return true;
           }
           runner.suspendEvents();
           runner.toggle();
+          
           runner.resumeEvents(true);          
         });
       });
@@ -341,6 +343,7 @@ Ext.define('catcher.controller.MatchController', {
       match.setDirty();
       
       matches.getProxy().setExtraParam("match_id",values.match_id);      
+      matches.getProxy().setExtraParam("test","xxx");
       
       
       Ext.data.Store.prototype.syncWithListener = function(onWriteComplete, syncMethod) {
@@ -356,7 +359,7 @@ Ext.define('catcher.controller.MatchController', {
       };
       
       matches.syncWithListener(function(){
-        Ext.Msg.alert("Informace o zápasu aktualizovány.");
+        Ext.Msg.alert("OK","Informace o zápasu aktualizovány.");
         Ext.Viewport.setMasked(false);
       });                                  
     }
@@ -385,15 +388,16 @@ function getTeamScore(matchId, teamId) {
 
         var scoringPlayer = players.findRecord("player_id", new String(item.get("player_id")));
         var assistPlayer = players.findRecord("player_id", new String(item.get("assist_player_id")));
-
-        pointsToDisplay.push({
-            scoringPlayer : fullName(scoringPlayer.data),
-            assistPlayer : assistPlayer != null ? fullName(assistPlayer.data) : "",
-            pointId : item.get("point_id"),
-            time : item.get("time"),
-            score_home: item.get("score_home"),
-            score_away: item.get("score_away")
-        });
+        if(scoringPlayer !== null) {                  
+          pointsToDisplay.push({          
+              scoringPlayer : fullName(scoringPlayer.data),
+              assistPlayer : assistPlayer != null ? fullName(assistPlayer.data) : "",
+              pointId : item.get("point_id"),
+              time : item.get("time"),
+              score_home: item.get("score_home"),
+              score_away: item.get("score_away")              
+          });
+        }
     });        
 
     Ext.define("PointView", {
