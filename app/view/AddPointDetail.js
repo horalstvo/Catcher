@@ -16,7 +16,6 @@ Ext.define("catcher.view.AddPointDetail", {
                 xtype : "selectfield",
                 label : "Nahrávající",
                 name : "assistPlayer",
-//                 style : "font-size: 1.4em",
                 options : []
             } ]
         }, {

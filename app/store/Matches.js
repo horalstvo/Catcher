@@ -12,9 +12,11 @@ Ext.define('catcher.store.Matches', {
             property : "time",
             direction : "ASC"
         },
-        // grouper: function(record){
-        // return record.get("home_name_short")[0];
-        // },
+        grouper: {
+          groupFn:function(record){
+            return "Hřiště "+record.get("field");
+          }
+        },        
         autoLoad : false
     }
 });
