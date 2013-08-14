@@ -43,21 +43,26 @@ Ext.define('catcher.view.TeamList', {
 						
 						var name_short = Ext.getStore("Teams").findRecord("team_id",this.target);						
 						Ext.getCmp("teamList").setBackText(name_short.get("name_short"));
+            
+            Ext.data.Store.prototype.syncWithListener = function(onWriteComplete, syncMethod) {
+              this.on('write', onWriteComplete, this, {single:true});  
+              var syncResult = syncMethod ? syncMethod.apply(this) : this.sync();
+              if (syncResult.added.length === 0 &&
+              syncResult.updated.length === 0 &&
+              syncResult.removed.length === 0) {  
+                this.removeListener('write', onWriteComplete, this, {single:true});
+                onWriteComplete(this);    
+              }
+              return syncResult;
+            };
 																		 
-// 						parent.appendChild(novy_hrac); // připojení do Evidence (Nestead List)																							
-						players.add(novy_hrac);
-            novy_hrac.dirty = true;						
-						players.sync();
-            novy_hrac.dirty = false; // wtf?? proč nefunguje metoda setDirty()??
-            novy_hrac.destroy();
-            var cilovy_team = this.target;
-            players.load(function(){
-              catcher.app.getController("Evidence").sestavEvidenci(cilovy_team);
-            });                        
-						
-// 						Ext.getCmp("teamList").goToLeaf(parent.lastChild);
-// 						catcher.app.getController("Evidence").showPlayer(false,{data:novy_hrac});
-						            
+            var cilovy_team = this.target;																							
+						players.add(novy_hrac);            
+            novy_hrac.setDirty(true);						
+						players.syncWithListener(function(){
+                catcher.app.getController("Evidence").sestavEvidenci(cilovy_team);
+              }
+            );                        												            
 					}					
 				},
 				{

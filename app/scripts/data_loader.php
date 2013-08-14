@@ -22,6 +22,8 @@ $tab3 = "mod_catcher_team2tournament";
 $tab4 = "mod_catcher_player2tournament";
 $tab5 = "mod_catcher_matches";
 $tab6 = "mod_catcher_points";
+$tab7 = "mod_catcher_player2subteam";
+$tab8 = "mod_catcher_subteams";
        
 $output = array();
 $store = $_GET["store"];
@@ -102,8 +104,11 @@ if($method == "POST"){ // insert dat ve storu
       update_match($data["match_id"]);
   	break;
     case "players":
-      mysql_query("INSERT INTO mod_catcher_$store (name,surname,number,team,nick, viditelnost) VALUES ('$data[name]','$data[surname]','$data[number]','$data[team]','$data[nick]',1)");
-      mysql_query("INSERT INTO $tab4 (player_id, tournament_id) VALUES (".mysql_insert_id().",$tournament_id)");
+      $master_team = mysql_fetch_array(mysql_query("SELECT master FROM $tab8 WHERE id=$data[team]"));
+      mysql_query("INSERT INTO mod_catcher_$store (name,surname,number,team,nick, viditelnost) VALUES ('$data[name]','$data[surname]','$data[number]','$master_team[master]','$data[nick]',1)");
+      mysql_query("INSERT INTO $tab4 (player_id, tournament_id, subteam_id) VALUES (".mysql_insert_id().",$tournament_id,$data[team])");
+      $output["dirty"]=false;
+      $output["id"]=mysql_insert_id();
     break;
   }
 } 
@@ -139,7 +144,8 @@ if($method == "DELETE"){ // budeme nìco mazat ze storu
 	switch($store){
 		case "players":	
 			mysql_query("DELETE FROM mod_catcher_$store WHERE id = $data[player_id]");
-      mysql_query("DELETE FROM $tab4 WHERE tournament_id = $tournament_id AND player_id = $data[player_id]");
+      mysql_query("DELETE FROM $tab7 WHERE player_id = $data[player_id] AND team_id = $data[team] AND $tournament_id");
+      mysql_query("DELETE FROM $tab4 WHERE tournament_id = $tournament_id AND player_id = $data[player_id] AND subteam_id = $data[team]");
 		break;
 		
 		case "points":			      
@@ -155,7 +161,7 @@ if($method == "GET"){ // stažení dat, rùzné prùbìžné aktualizaèní požadavky
     if(isset($tournament_id)) $t_cond = "tournament_id=$tournament_id";
     switch($store){
       case "teams":
-        $vysledek = mysql_query("SELECT $tab1.* FROM $tab1 LEFT JOIN $tab3 ON $tab3.team_id=$tab1.id WHERE $tab3.$t_cond $skryte");
+        $vysledek = mysql_query("SELECT $tab8.* FROM $tab8 LEFT JOIN $tab3 ON $tab3.team_id=$tab8.id");
         echo mysql_error();
       break;
       case "matches":
@@ -178,7 +184,8 @@ if($method == "GET"){ // stažení dat, rùzné prùbìžné aktualizaèní požadavky
         }
       break;
       case "players":
-        $vysledek = mysql_query("SELECT $tab2.* FROM $tab2 LEFT JOIN $tab4 ON $tab4.player_id=$tab2.id WHERE $tab4.$t_cond $skryte");
+        $vysledek = mysql_query("SELECT $tab2.surname,$tab2.id,$tab2.name,$tab2.number,$tab2.nick,$tab4.subteam_id AS team FROM $tab2 LEFT JOIN $tab4 ON $tab4.player_id=$tab2.id WHERE $tab4.$t_cond $skryte");
+        echo mysql_error();
       break;
       case "tournaments":
         $vysledek = mysql_query("SELECT * FROM mod_catcher_tournaments WHERE active=1 ORDER BY name");
@@ -188,8 +195,8 @@ if($method == "GET"){ // stažení dat, rùzné prùbìžné aktualizaèní požadavky
     if(isset($vysledek)) {
   		while($data = mysql_fetch_array($vysledek)){
   			if($store == "matches"){        
-  				$home = mysql_fetch_array(mysql_query("SELECT * FROM mod_catcher_teams WHERE id = $data[home_id]"));
-  				$away = mysql_fetch_array(mysql_query("SELECT * FROM mod_catcher_teams WHERE id = $data[away_id]"));
+  				$home = mysql_fetch_array(mysql_query("SELECT * FROM mod_catcher_subteams WHERE id = $data[home_id]"));
+  				$away = mysql_fetch_array(mysql_query("SELECT * FROM mod_catcher_subteams WHERE id = $data[away_id]"));
   				$data["home_name_short"] = $home["name_short"];
   				$data["home_name_full"] = $home["name_full"];
   				$data["away_name_short"] = $away["name_short"];

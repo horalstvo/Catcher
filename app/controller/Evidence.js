@@ -15,12 +15,14 @@ Ext.define('catcher.controller.Evidence', {
     deletePlayer : function() {
         var store = Ext.getStore("Players");
         var data = this.getKarticka().getValues(); // data o hráči ke smazání
-        store.remove(store.findRecord("player_id", data.player_id, false, false, false, true)); // odstranit hráče z tabulky Players
+        store.remove(store.findRecord("player_id", data.player_id, false, false, false, true)); // odstranit hráče ze storu Players
         var parentNode = Ext.getStore("Evidence").findRecord("team_id", data.team, false, false, false, true); // parentNode (tým node)
         var child = parentNode.findChild("player_id", data.player_id); // node mazaném hráče v TreeStore
         Ext.getCmp("teamList").onBackTap(); // vyvolat back event
+        console.log
         parentNode.removeChild(child); // odstranit node s hráčem
         store.sync();
+        catcher.app.getController("Evidence").sestavEvidenci(data.team);
     },
 
     updatePlayer : function() {
