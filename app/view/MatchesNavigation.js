@@ -6,7 +6,6 @@ Ext.define("catcher.view.MatchesNavigation", {
         title : "Zápasy",
         iconCls : "time",
         id : "matchesNavigation",
-        styleHtmlContent : true,
 
         items : [ {
             xtype : 'matchesList'
@@ -99,28 +98,32 @@ Ext.define("catcher.view.MatchesNavigation", {
       btn.forEach(function(element){
         if(element.name != show) element.setUi("dark");
         if(element.name == show) element.setUi("decline");  
-      });      
-      Ext.Viewport.setMasked({
-        xtype : 'loadmask',
-        message: msg,
-        indicator: false
       });
-      var store = Ext.getStore("Matches");
-      Ext.getStore("Matches").clearFilter();
+      if(msg != false) {      
+        Ext.Viewport.setMasked({
+          xtype : 'loadmask',
+          message: msg,
+          indicator: false
+        });
+      }
+      var store = Ext.getCmp("matchesList").getStore();
+      store.clearFilter();
       if(show!="all"){
-        store.filterBy(function(record){
-          if(show == "past"){                
-            if(record.raw.time_end > 0) return true;
+        store.filterBy(function(record){                    
+          if(show == "past"){                            
+            if(record.get("time_end").getTime() > 0) return true;
             return false;
           }
           if(show == "next"){                
-            if(record.raw.time_end == 0) return true;
+            if(record.get("time_end").getTime() == 0) return true;
             return false;
           }
         });
       }
-      window.setTimeout(function(){
-        Ext.Viewport.setMasked(false);
-      },1000);
+      if(msg != false) {
+        window.setTimeout(function(){
+          Ext.Viewport.setMasked(false);
+        },1000);
+      }
     }
 });
