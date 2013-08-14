@@ -25,7 +25,12 @@ $tab6 = "mod_catcher_points";
        
 $output = array();
 $store = $_GET["store"];
-if(isset($_GET["tournament_id"])) $tournament_id = $_GET["tournament_id"];
+if(isset($_GET["tournament_id"])) {
+  $tournament_id = $_GET["tournament_id"];
+  $tmp = explode("/",$tournament_id);
+  if(count($tmp)>1) $tournament_id = $tmp[0];
+  $tmp = false;
+}
 $method = $_SERVER['REQUEST_METHOD'];
 if(isset($_REQUEST['callback'])) $callback = $_REQUEST['callback'];
 
@@ -45,10 +50,10 @@ function update_match_settings($data){
   $time = time();
   switch($data["in_play"]){
     case 0:
-      mysql_query("UPDATE $tab5 SET time_end = IF((time_end=0 AND time_start>0),$time,time_end), in_play = 0 WHERE id = $data[match_id]"); 
+      mysql_query("UPDATE $tab5 SET time_end = IF((time_start>0 AND in_play=1),$time,time_end), in_play = 0 WHERE id = $data[match_id]");       
     break;
     case 1:
-      mysql_query("UPDATE $tab5 SET time_start = IF(time_start=0,$time,time_start), in_play = 1 WHERE id = $data[match_id]");
+      mysql_query("UPDATE $tab5 SET time_start = IF(time_start=0,$time,time_start), time_end = 0, in_play = 1 WHERE id = $data[match_id]");
     break;
   } 
   mysql_query("UPDATE $tab5 SET field = '$data[field]', length = '$data[length]', time = '$data[time]' WHERE id = $data[match_id]");   
@@ -202,7 +207,7 @@ if($method == "GET"){ // stažení dat, rùzné prùbìžné aktualizaèní požadavky
           mysql_query("UPDATE mod_catcher_points SET score_home = '".$score["score_home"]["score"]."', score_away = '".$score["score_away"]["score"]."' WHERE id = '".$data["id"]."'");
           $tmp["score_home"] = $score["score_home"]["score"];        
           $tmp["score_away"] = $score["score_away"]["score"];
-        }
+        }        
   	  	$output[] = $tmp;
   		}
     }
