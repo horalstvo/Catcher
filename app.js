@@ -12,7 +12,7 @@ Ext.application({
         'Ext.MessageBox'
     ],
 
-    views : [ "Main", "Login", "About", "Tournament", "MatchesNavigation", "TeamList","MatchDetailCounter","MatchDetailSettings","MatchDetailScore"],
+    views : [ "Main", "Login", "About", "Tournament", "MatchesNavigation", "TeamList","MatchDetailCounter","MatchDetailSettings","MatchDetailScore","EditorPanel"],
     stores : [ "Tournaments", "Matches", "Session", "Teams", "Players", "Evidence", "Points" ],
     models : [ "Tournament", "Match", "Session", "Team", "Player", "Evidence", "Point" ],
     controllers : [ "Login", "Evidence", "MatchController"],
@@ -41,6 +41,17 @@ Ext.application({
 
         // Initialize the main view
         Ext.Viewport.add(Ext.create('catcher.view.Main'));
+        Ext.data.Store.prototype.syncWithListener = function(onWriteComplete, syncMethod) {
+          this.on('write', onWriteComplete, this, {single:true});  
+          var syncResult = syncMethod ? syncMethod.apply(this) : this.sync();
+          if (syncResult.added.length === 0 &&
+          syncResult.updated.length === 0 &&
+          syncResult.removed.length === 0) {  
+            this.removeListener('write', onWriteComplete, this, {single:true});
+            onWriteComplete(this);    
+          }
+          return syncResult;
+        };
     },
 
     onUpdated: function() {
