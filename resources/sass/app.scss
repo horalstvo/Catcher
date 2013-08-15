@@ -1,4 +1,9 @@
+// styl
+$base-gradient : "matte";
+$include-default-icons: false;
+
 @import 'sencha-touch/default/all';
+
 
 // You may remove any of the following modules that you
 // do not use in order to create a smaller css file.
@@ -12,8 +17,26 @@
 @include sencha-indexbar;
 @include sencha-list;
 @include sencha-layout;
-@include sencha-carousel;
 @include sencha-form;
 @include sencha-msgbox;
 
+// nepoužívané
+//@include sencha-carousel;
+
 // Your custom code goes here...
+
+// ikony
+@include pictos-iconmask("calendar2");
+@include pictos-iconmask("list");
+@include pictos-iconmask("user_add");
+@include pictos-iconmask("home");
+@include pictos-iconmask("add");
+@include pictos-iconmask("time");
+@include pictos-iconmask("team");
+@include pictos-iconmask("trash");
+@include pictos-iconmask("settings");
+@include pictos-iconmask("compose");
+@include pictos-iconmask("refresh");
+@include pictos-iconmask("info");
+@include pictos-iconmask("check2");
+@include pictos-iconmask("power_on");
