@@ -5,7 +5,7 @@ Ext.define("catcher.view.Login", {
 
     config : {
         title : "Přihlášení",
-        iconCls : "user",
+        iconCls : "home",
 
         items : [ {
             xtype : "fieldset",

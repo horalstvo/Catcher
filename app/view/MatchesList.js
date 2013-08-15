@@ -6,9 +6,7 @@ Ext.define("catcher.view.MatchesList", {
         title : "Zápasy",
         iconCls : "time",
         styleHtmlContent : true,
-        id : "matchesList",
-        items : [          
-        ],
+        id : "matchesList",      
 
         store : "Matches",
         sorters: "time",
@@ -33,9 +31,6 @@ Ext.define("catcher.view.MatchesList", {
                 );                
                 Ext.getCmp("tournament").getTabBar().show();
                 Ext.getCmp("matchesList").deselectAll();
-            },
-            initialize:function(){
-              
             }
         }
     },

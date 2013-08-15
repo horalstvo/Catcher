@@ -5,7 +5,7 @@ Ext.define("catcher.view.MatchDetailScore",{
 	
 	config:{
     title : "Skóre + spirit",
-    iconCls : "compose",
+    iconCls : "check2",
     id: "matchDetailScore",
 		styleHtmlContent: true,
 		

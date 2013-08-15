@@ -18,7 +18,7 @@ Ext.define('catcher.view.TeamList', {
 				{
 					xtype: "button",
 					hidden: true,
-					iconCls: "add",
+					iconCls: "user_add",
 					align: "right",
 					id: "addPlayer",
 					target: "",
@@ -30,7 +30,7 @@ Ext.define('catcher.view.TeamList', {
 						var evidence = Ext.getStore("Evidence"); 
 						var parent = evidence.getNodeById(this.target);
 						var novy_hrac = Ext.create("catcher.model.Player",{
-              nick: "AAA nick",
+              nick: "",
 							name:"Nový",
 							surname: "Hráč",							
 							team: this.target,
@@ -70,7 +70,7 @@ Ext.define('catcher.view.TeamList', {
 					align: "right",
 					hidden: true,
 					iconMask: true,
-					iconCls: "delete",
+					iconCls: "trash",
 					ui: "decline",
 					id: "deletePlayer",
 					handler: function(){
@@ -84,10 +84,6 @@ Ext.define('catcher.view.TeamList', {
 			]
     },
     listeners: {
-      painted: function(){
-//         tohle se možná bude hodit, ale zatím to není potřeba (přestavění evidence vždy při jejím zobrazení)
-//         catcher.app.getController("Evidence").sestavEvidenci(false);
-      },
       leafitemtap: function(nestedList, list, index, target, record){
         catcher.app.getController("Evidence").showPlayer(list, record);
         Ext.getCmp("addPlayer").hide();

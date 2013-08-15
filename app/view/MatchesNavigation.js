@@ -4,7 +4,7 @@ Ext.define("catcher.view.MatchesNavigation", {
     requires : [ "catcher.view.MatchDetail", "catcher.view.MatchesList", "catcher.view.AddPointDetail", "catcher.view.ScoreList", "catcher.view.MatchPlayerList", "catcher.view.EditorPanel"],
     config : {
         title : "Zápasy",
-        iconCls : "time",
+        iconCls : "list",
         id : "matchesNavigation",
 
         items : [ {
@@ -34,7 +34,7 @@ Ext.define("catcher.view.MatchesNavigation", {
             },
             {
               xtype: "button",
-              iconCls:"trash",
+              iconCls:"calendar2",
               name:"past",
               align:"left",
               filtr:true,

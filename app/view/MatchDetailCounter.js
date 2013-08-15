@@ -4,7 +4,7 @@ Ext.define("catcher.view.MatchDetailCounter", {
   requires : [ "Ext.SegmentedButton"],
   config: {
     title : "Zápas",
-    iconCls : "bookmarks",
+    iconCls : "compose",
     id: "matchDetailCounter",
     layout : "vbox",
     styleHtmlContent : true,
