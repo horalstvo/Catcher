@@ -5,7 +5,6 @@ Ext.define("catcher.view.EditorPanel",{
 	requires: ["Ext.form.FieldSet","Ext.form.Select","Ext.field.Hidden","Ext.field.Number"],
   
   config: {
-    title: "Úprava",
     modal: true,
     hideOnMaskTap: false,
     styleHtmlContent: true,
@@ -50,7 +49,7 @@ Ext.define("catcher.view.EditorPanel",{
       },{
         docked: 'top',
         xtype: 'toolbar',
-        title: 'Parametry utkání'
+        title: 'Nový zápas'
       },{
         docked: 'bottom',
         ui: 'light',
@@ -69,21 +68,30 @@ Ext.define("catcher.view.EditorPanel",{
             ui: 'confirm',
             handler: function() {
               var formPanel = Ext.getCmp('editorPanel');
-              Ext.Viewport.setMasked({
-                xtype: "loadmask",
-                message: "Ukládám zápas na frisbee.cz"
-              });
               var data = formPanel.getValues();
-              formPanel.hide();
-              var match = Ext.create("catcher.model.Match",data);                
-              var store = Ext.getCmp("matchesList").getStore(); 
-              store.add(match);                                
-              store.syncWithListener(function(){
-                store.load(function(){
-                  Ext.Viewport.setMasked(false);
-                  Ext.Msg.alert("OK","Zápas uložen");                  
+              var message = new Array();
+              if(data.home_id == data.away_id) message.push("Tým nemůže hrát sám proti sobě");
+              if(data.length == null || data.length == 0) message.push("Zadej délku zápasu v minutách");
+              
+              if(message.length > 0){
+                Ext.Msg.alert("Chybějící data",message.join("<br />"));
+              }else{
+                            
+                Ext.Viewport.setMasked({
+                  xtype: "loadmask",
+                  message: "Ukládám zápas na frisbee.cz"
+                });              
+                formPanel.hide();
+                var match = Ext.create("catcher.model.Match",data);                
+                var store = Ext.getCmp("matchesList").getStore(); 
+                store.add(match);                                
+                store.syncWithListener(function(){
+                  store.load(function(){
+                    Ext.Viewport.setMasked(false);
+                    Ext.Msg.alert("OK","Zápas uložen");                  
+                  });
                 });
-              });                              
+               }                              
             }
           }
         ]

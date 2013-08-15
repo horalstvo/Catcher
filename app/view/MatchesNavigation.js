@@ -69,7 +69,7 @@ Ext.define("catcher.view.MatchesNavigation", {
                 formPanel.query("selectfield[name=home_id]")[0].setOptions(teams);
                 formPanel.query("selectfield[name=away_id]")[0].setOptions(teams);
                 formPanel.setValues({
-                  time:tournament.get("time"),                  
+                  time:new Date()                  
                 });                
                 editorPanel.show();                                                          
               }
