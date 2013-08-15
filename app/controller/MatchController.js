@@ -9,6 +9,7 @@ Ext.define('catcher.controller.MatchController', {
             editPointDetail : "editPointDetail",
             scoreList : "scoreList",
             matchDetailSettings: "matchDetailSettings",            
+            matchDetailScore: "matchDetailScore",
         },
         control : {
             "matchesList" : {
@@ -46,6 +47,9 @@ Ext.define('catcher.controller.MatchController', {
             },
             "matchDetailSettings button[name=submit]":{
                 tap: "updateMatchSettings"
+            },
+            "matchDetailScore button[name=submit]":{
+                tap: "updateMatchSettings"
             }
         },
         listeners: {
@@ -80,6 +84,12 @@ Ext.define('catcher.controller.MatchController', {
         session.match_id = match.match_id;
         this.fillMatchDetailContent(match);
         this.fillMatchDetailSettings(match);
+        var matchDetailScore = this.getMatchDetailScore()
+        matchDetailScore.setValues(match);
+        matchDetailScore.query("numberfield[name=score_home]")[0].setLabel("Skóre "+match.home_name_short);
+        matchDetailScore.query("numberfield[name=spirit_home]")[0].setLabel("Spirit "+match.home_name_short);
+        matchDetailScore.query("numberfield[name=score_away]")[0].setLabel("Skóre "+match.away_name_short);
+        matchDetailScore.query("numberfield[name=spirit_away]")[0].setLabel("Spirit "+match.away_name_short);
     },
 
     addPointHome : function() {
@@ -287,14 +297,7 @@ Ext.define('catcher.controller.MatchController', {
     },
     
     fillMatchDetailSettings: function(match){            
-      this.getMatchDetailSettings().setValues({
-        match_id: match.match_id,
-        field:match.field,
-        date:match.time,
-        time:match.time,                
-        length:match.length,
-        in_play:match.in_play
-      });
+      this.getMatchDetailSettings().setValues(match);
       
       var runner = this.getMatchDetailSettings().query("togglefield")[0];
       runner.on("change",function(field,slider,thumb,newValue,oldValue){      
@@ -329,26 +332,24 @@ Ext.define('catcher.controller.MatchController', {
         });         
       }
       return fields2push;
-    },
+    },        
     
     updateMatchSettings : function(){
       Ext.Viewport.setMasked({
           xtype : 'loadmask',
           message : 'Ukládám informace o zápase'
       });
-      var form = this.getMatchDetailSettings();
+      
+      if(Ext.getCmp("matchDetailSettings").isPainted()) var form = this.getMatchDetailSettings();
+      if(Ext.getCmp("matchDetailScore").isPainted()) var form = this.getMatchDetailScore();
+      
       values = form.getValues(true, true);
       
       var matches = Ext.getStore("Matches");
-      var match = matches.findRecord("match_id",values.match_id,false,false,true);      
-
-      match.set({
-        length: values.length,
-        field: values.field,
-        time: values.time,
-        in_play:values.in_play  
-      });
+      var match = matches.findRecord("match_id",values.match_id,false,false,true);
       
+
+      match.set(values);            
       match.setDirty();
       
       matches.getProxy().setExtraParam("match_id",values.match_id);                 

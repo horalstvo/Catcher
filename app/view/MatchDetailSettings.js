@@ -7,7 +7,7 @@ Ext.define("catcher.view.MatchDetailSettings",{
     title : "Nastavení",
     iconCls : "settings",
     id: "matchDetailSettings",
-// 		styleHtmlContent: true,    
+		styleHtmlContent: true,    
 		
 		items:[
 			{

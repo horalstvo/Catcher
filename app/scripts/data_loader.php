@@ -58,7 +58,7 @@ function update_match_settings($data){
       mysql_query("UPDATE $tab5 SET time_start = IF(time_start=0,$time,time_start), time_end = 0, in_play = 1 WHERE id = $data[match_id]");
     break;
   } 
-  mysql_query("UPDATE $tab5 SET field = '$data[field]', length = '$data[length]', time = '$data[time]' WHERE id = $data[match_id]");   
+  mysql_query("UPDATE $tab5 SET field = '$data[field]', length = '$data[length]', time = '$data[time]', spirit_away = '$data[spirit_away]', spirit_home = '$data[spirit_home]' WHERE id = $data[match_id]");   
   $result = mysql_fetch_array(mysql_query("SELECT in_play,time_start,time_end FROM $tab5 WHERE id = $data[match_id]"));
   $output["time_start"] = $result["time_start"]; 
   $output["time_end"] = $result["time_end"];  

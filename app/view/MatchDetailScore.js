@@ -13,21 +13,33 @@ Ext.define("catcher.view.MatchDetailScore",{
 			{
 				xtype: "fieldset",
 				title: "Výsledné skóre a spirit",
-				instructions : "Po konci zápasu lze přímo zapsat Spirit, případně natvrdo upravit skóre. Pokud se zadá skóre jiné, než je pomocí skórovacího systémů s hráči, budou další body doplněny anonymními hráči.",
+				instructions : "Spirit ve formátu kolik tým obdržel, ne kolik udělil. <br /> Výsledné skóre lze přepsat, body budou vloženy jako anonymní.",
 				
 				items:	[
-// 					{
-// 						xtype: "selectfield",
-// 						label: "Hřiště",
-// 						name: "field",
-// 						options: []
-// 					},
-//           {
-// 						xtype: "datepickerfield",
-// 						label: "Datum",
-// 						name: "date",
-// 						value: ""
-// 					},
+					{
+						xtype: "numberfield",
+						label: "Skóre domácí",
+						name: "score_home",
+						value: 0
+					},
+          {
+						xtype: "numberfield",
+						label: "Skóre hosté",
+						name: "score_away",
+						value: 0
+					},
+          {
+						xtype: "numberfield",
+						label: "Spirit domácí",
+						name: "spirit_home",
+						value: 0
+					},
+          {
+						xtype: "numberfield",
+						label: "Spirit hosté",
+						name: "spirit_away",
+						value: 0
+					},
 					{
 						xtype: "hiddenfield",
 						name: "match_id",
@@ -37,6 +49,7 @@ Ext.define("catcher.view.MatchDetailScore",{
 			},
 			{
 				xtype: "button",
+        name: "submit",
 				text: "Uložit",
 				ui: "confirm"
 			}			

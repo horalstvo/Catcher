@@ -1,7 +1,7 @@
 Ext.define("catcher.view.EditPointDetail", {
     extend : "Ext.form.Panel",
     xtype : "editPointDetail",
-    requires : [ "Ext.form.FieldSet", "Ext.form.Select", "Ext.field.Hidden" ],
+    requires : [ "Ext.form.FieldSet", "Ext.form.Select", "Ext.field.Hidden" ],        
 
     config : {
         styleHtmlContent : true,
