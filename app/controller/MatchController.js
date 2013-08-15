@@ -13,7 +13,9 @@ Ext.define('catcher.controller.MatchController', {
         control : {
             "matchesList" : {
                 disclose : "showMatchDetail",
-                select : "showMatchDetail"
+                select : "showMatchDetail",
+                itemtaphold: "confirmMatchDelete",
+                itemswipe: "confirmMatchDelete"
             },
             "matchesNavigation matchPlayerList[name=score]" : {
                 disclose : "showAssistPlayer",
@@ -50,6 +52,20 @@ Ext.define('catcher.controller.MatchController', {
           initialize: function(){            
           }
         }
+    },
+    
+    confirmMatchDelete: function (el,index,target,record){
+      el.suspendEvents();
+      Ext.Msg.confirm("Smazat zápas","Opravdu chceš smazat zápas? <br />"+record.get("home_name_full")+" vs. "+record.get("away_name_full"),function(response){        
+        if(response == "yes"){
+          var store = el.getStore();
+          store.remove(record);
+          store.sync();
+          Ext.Msg.alert("OK","Zápas odstraněn");                    
+        }
+        el.resumeEvents(true);
+        el.deselectAll();
+      })
     },
     
     showMatchDetail : function(list, record) {

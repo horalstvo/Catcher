@@ -147,7 +147,7 @@ if($method == "PUT"){ // update dat ve storu
 
 if($method == "DELETE"){ // budeme nìco mazat ze storu
 	$data = file_get_contents("php://input");
-	$data = json_decode($data,true);
+	$data = json_decode($data,true);  
 
 	switch($store){
 		case "players":	
@@ -160,6 +160,11 @@ if($method == "DELETE"){ // budeme nìco mazat ze storu
       mysql_query("DELETE FROM mod_catcher_$store WHERE id = $data[point_id]");
       update_match($data["match_id"]);
 		break;
+    
+    case "matches":      
+      mysql_query("DELETE FROM $tab5 WHERE id = '$data[match_id]'");      
+      mysql_query("DELETE FROM $tab6 WHERE match_id = '$data[match_id]'");
+    break;
 	}
 }
 
