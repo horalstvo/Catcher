@@ -10,30 +10,7 @@ Ext.define('catcher.controller.Login', {
             'loginPanel button' : {
                 tap : 'doLogin'
             },
-            "#logout" : {
-                tap : "doLogout"
-            }
         }
-    },
-
-    doLogout : function() {
-        Ext.Msg.confirm("Odhlášení", "Opravdu se chcete odhlásit?", function(response) {
-            if (response == "yes") {
-                Ext.Msg.alert("Not implemented yet");
-                // Ext.Viewport.remove({
-                // xtype: "tournamentPanel"
-                // });
-                // Ext.Viewport.animateActiveItem("main",{type:"slide",direction:"right"});
-                // var store = Ext.data.StoreManager.lookup("Session");
-                // var device = Ext.device.Device.uuid;
-                // store.remove(store.findRecord("uuid",device));
-                // Ext.Msg.alert("Zařízení odhlášeno ze správy");
-                // Ext.getCmp("deletePlayer").destroy();
-                // Ext.getCmp("addPlayer").destroy();
-                // Ext.getCmp("logout").destroy();
-                // Ext.Viewport.animateActiveItem("main",{type:"slide",direction:"right"});
-            }
-        });
     },
 
     doLogin : function() {
