@@ -72,14 +72,15 @@ Ext.define('catcher.controller.MatchController', {
       })
     },
     
-    showMatchDetail : function(list, record) {
-        Ext.getCmp("matchesNavigation").query("button[navigation_only=true]").forEach(function(el){el.hide()}); // skrytí filtrovacích tlačítek
+    showMatchDetail : function(list, record) {        
         var match = record.data;
         this.getMatchesNavigation().push({
             xtype : "matchDetail",
             title : match.home_name_short + " x " + match.away_name_short,
             data : match
         });
+        Ext.getCmp("matchesNavigation").query("button[navigation_only=true]").forEach(function(el){el.hide()}); // skrytí filtrovacích tlačítek
+        Ext.getCmp("tournament").getTabBar().hide(); // skrytí hlavní navigace turnaje
         var session = Ext.getStore("Session").findRecord("uuid", Ext.device.Device.uuid);
         session.match_id = match.match_id;
         this.fillMatchDetailContent(match);

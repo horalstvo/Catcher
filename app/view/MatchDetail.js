@@ -13,9 +13,9 @@ Ext.define("catcher.view.MatchDetail", {
         ]        
         ,
         listeners : {
-            painted : function() {
-                Ext.getCmp("tournament").getTabBar().hide();                
-            },
+//             painted : function() {
+//                                 
+//             },
             show : function(){
             this.query('.button').forEach(function(c){
 //               zřejmě bug sencha, vrací jinou třídu, než ve skutečnosti má mít   

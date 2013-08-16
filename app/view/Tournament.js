@@ -5,6 +5,11 @@ Ext.define("catcher.view.Tournament", {
   
     config : {
       tabBarPosition : "bottom",
+      tabBar:{
+        defaults:{
+          iconMask: true
+        }
+      },
       id : "tournament",
       items : [
         {xtype : "matchesNavigation"},
@@ -16,8 +21,7 @@ Ext.define("catcher.view.Tournament", {
             xtype: "button",
             ui: "decline",
             id: "logout",
-            iconCls: "power_on",
-            iconMask: true,
+            iconCls: "power_on",            
             right: "1%",        
             height: "50%",
             margin: "10 0 0 0",
@@ -40,7 +44,26 @@ Ext.define("catcher.view.Tournament", {
                   }
               });
             }        
-          });
+          }
+//           ,{
+//             xtype:"button",
+//             id:"help",
+//             iconCls:"help",
+//             left: "1%",        
+//             height: "50%",
+//             margin: "10 0 0 0",
+//             handler:function(){                
+//               var helpPanel = Ext.getCmp("helpPanel") || new catcher.view.HelpPanel();
+//               
+//               if(!helpPanel.getParent()){
+//                 Ext.Viewport.add(helpPanel);
+//               }
+// 
+//                               
+//               helpPanel.show();                                                          
+//             }
+//           }
+          );
         },
       }
     }
