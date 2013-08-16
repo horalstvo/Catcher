@@ -22,11 +22,13 @@ Ext.define("catcher.view.MatchDetailCounter", {
             flex : 1,
             name : "scoreHome",
             text : "[home]",
+            ui: "home"
         }, {
             xtype : "button",
             flex : 1,
             name : "scoreAway",
             text : "[away]",
+            ui: "away"
         } ],
     }, {
         xtype : "segmentedbutton",
@@ -41,11 +43,13 @@ Ext.define("catcher.view.MatchDetailCounter", {
             flex : 1,
             name : "addPointHome",
             text : "+",
+            ui: "home"
         }, {
             xtype : "button",
             flex : 1,
             name : "addPointAway",
             text : "+",
+            ui: "away"
         } ],
     }]
   }

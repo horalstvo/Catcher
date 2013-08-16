@@ -40,3 +40,9 @@ $include-default-icons: false;
 @include pictos-iconmask("info");
 @include pictos-iconmask("check2");
 @include pictos-iconmask("power_on");
+@include pictos-iconmask("help");
+@include sencha-loading-spinner;
+
+// tlačítka
+@include sencha-button-ui('home', #B1CEDE , 'matte');
+@include sencha-button-ui('away', #DEC1B1 , 'matte');
