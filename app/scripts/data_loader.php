@@ -174,7 +174,7 @@ if($method == "GET"){ // stažení dat, rùzné prùbìžné aktualizaèní požadavky
     if(isset($tournament_id)) $t_cond = "tournament_id=$tournament_id";
     switch($store){
       case "teams":
-        $vysledek = mysql_query("SELECT $tab8.* FROM $tab8 LEFT JOIN $tab3 ON $tab3.team_id=$tab8.id");
+        $vysledek = mysql_query("SELECT $tab8.* FROM $tab8 LEFT JOIN $tab3 ON $tab3.team_id=$tab8.id WHERE $tab3.tournament_id=$tournament_id");
         echo mysql_error();
       break;
       case "matches":
