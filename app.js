@@ -12,7 +12,7 @@ Ext.application({
         'Ext.MessageBox'
     ],
 
-    views : [ "Main", "Login", "About", "Tournament", "MatchesNavigation", "TeamList","MatchDetailCounter","MatchDetailSettings","MatchDetailScore","EditorPanel"],
+    views : [ "Main", "Login", "About", "Tournament", "MatchesNavigation", "TeamList","MatchDetailCounter","MatchDetailSettings","MatchDetailScore","EditorPanel","HelpPanel"],
     stores : [ "Tournaments", "Matches", "Session", "Teams", "Players", "Evidence", "Points" ],
     models : [ "Tournament", "Match", "Session", "Team", "Player", "Evidence", "Point" ],
     controllers : [ "Login", "Evidence", "MatchController"],
