@@ -37,10 +37,11 @@ $method = $_SERVER['REQUEST_METHOD'];
 if(isset($_REQUEST['callback'])) $callback = $_REQUEST['callback'];
 
 $cols["tournaments"] = array("tournament_id"=>"id","tournament_name"=>"name","fields"=>"fields","time"=>"time");
-$cols["teams"] = array("team_id"=>"id","name_short"=>"name_short","name_full"=>"name_full");
+$cols["teams"] = array("team_id"=>"id","name_short"=>"name_short","name_full"=>"name_full","master_id"=>"master");
 $cols["players"] = array("player_id"=>"id","name"=>"name","surname"=>"surname","number"=>"number","team"=>"team","nick"=>"nick");
 $cols["matches"] = array("match_id"=>"id","tournament_id"=>"tournament_id","home_id"=>"home_id","home_name_full"=>"home_name_full","home_name_short"=>"home_name_short","away_name_full"=>"away_name_full","away_name_short"=>"away_name_short","away_id"=>"away_id","score_home"=>"score_home","score_away"=>"score_away","spirit_home"=>"spirit_home","spirit_away"=>"spirit_away","field"=>"field","time"=>"time","time_start"=>"time_start","time_end"=>"time_end","length"=>"length","in_play"=>"in_play");
 $cols["points"] = array("point_id"=>"id","team_id"=>"team_id","player_id"=>"player_id","assist_player_id"=>"assist_player_id","match_id"=>"match_id","time"=>"time");
+$cols["rosters"] = $cols["players"];
 
 $cols_app = $cols;
 $cols_app["players"]["player_id"] = "player_id";
@@ -197,8 +198,11 @@ if($method == "GET"){ // stažení dat, rùzné prùbìžné aktualizaèní požadavky
         }
       break;
       case "players":
-        $vysledek = mysql_query("SELECT $tab2.surname,$tab2.id,$tab2.name,$tab2.number,$tab2.nick,$tab4.subteam_id AS team FROM $tab2 LEFT JOIN $tab4 ON $tab4.player_id=$tab2.id WHERE $tab4.$t_cond $skryte");
-        echo mysql_error();
+        $vysledek = mysql_query("SELECT $tab2.surname,$tab2.id,$tab2.name,$tab2.number,$tab2.nick,$tab4.subteam_id AS team FROM $tab2 LEFT JOIN $tab4 ON $tab4.player_id=$tab2.id WHERE $tab4.$t_cond $skryte");        
+      break;
+      case "rosters":
+        $team = mysql_fetch_array(mysql_query("SELECT master FROM $tab8 WHERE id = '$_GET[team]'"));
+        $vysledek = mysql_query("SELECT $tab2.team,$tab2.surname,$tab2.id,$tab2.name,$tab2.number,$tab2.nick FROM $tab2 WHERE team = $team[master] $skryte");        
       break;
       case "tournaments":
         $vysledek = mysql_query("SELECT * FROM mod_catcher_tournaments WHERE active=1 ORDER BY name");

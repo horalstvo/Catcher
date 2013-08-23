@@ -54,12 +54,9 @@ Ext.define("catcher.view.MatchesNavigation", {
               navigation_only:true,
               align:"right",
               handler:function(){                
-                var editorPanel = Ext.getCmp("editorPanel") || new catcher.view.EditorPanel();
+                var editorPanel = Ext.getCmp("editorPanel") || new catcher.view.EditorPanel();                
+                if(!editorPanel.getParent()) Ext.Viewport.add(editorPanel);
                 
-                if(!editorPanel.getParent()){
-                  Ext.Viewport.add(editorPanel);
-                }
-
                 var formPanel = Ext.getCmp('editorPanel');
                 var tournament_id = Ext.getStore("Session").findRecord("uuid", Ext.device.Device.uuid).get("tournament_id");                
                 var tournament = Ext.getStore("Tournaments").findRecord("tournament_id",tournament_id,false,false,true);

@@ -1,6 +1,6 @@
 Ext.define('catcher.view.TeamList', {                                             
   extend: "Ext.dataview.NestedList",
-  requires: ["catcher.view.PlayersDetail","Ext.dataview.DataView"],  
+  requires: ["catcher.view.PlayersDetail","Ext.dataview.DataView","catcher.view.TeamRoster"],  
   xtype: "teamList",
   id: "teamList",  
   config: {
@@ -14,7 +14,25 @@ Ext.define('catcher.view.TeamList', {
       xtype: "playersDetail"
     },
     toolbar: {
+      defaults:{
+        iconMask: true
+      },
       items: [
+      {
+        xtype: "button",
+        hidden: true,
+        iconCls: "address_book",
+        id: "connectPlayer",
+        target: "",
+        align: "right",
+        handler: function(){
+          var modalPanel = Ext.getCmp("modalPanel") || new catcher.view.ModalPanel();                
+          if(!modalPanel.getParent()) Ext.Viewport.add(modalPanel);
+          var teamRoster = Ext.getCmp("teamRoster") || new catcher.view.TeamRoster();
+          modalPanel.add(teamRoster);
+          modalPanel.show();
+        }        
+      },
 				{
 					xtype: "button",
 					hidden: true,
@@ -22,7 +40,6 @@ Ext.define('catcher.view.TeamList', {
 					align: "right",
 					id: "addPlayer",
 					target: "",
-					iconMask: true,
 					handler: function(){
 						Ext.getCmp("addPlayer").hide();
 						var players = Ext.getStore("Players");
@@ -87,26 +104,32 @@ Ext.define('catcher.view.TeamList', {
       leafitemtap: function(nestedList, list, index, target, record){
         catcher.app.getController("Evidence").showPlayer(list, record);
         Ext.getCmp("addPlayer").hide();
+        Ext.getCmp("connectPlayer").hide();
       },
       itemtap: function(nested, list, index, target, record){      	
       	if(record.isLeaf() == false){
 					// nastavuji master tým, protože zatím nevím jak zjistit aktuálně zobrazený node      		
       		Ext.getCmp("addPlayer").target = record.getId();
       		Ext.getCmp("addPlayer").show();
+          Ext.getCmp("connectPlayer").show();
       		Ext.getCmp("teamList").setBackText("Týmy");
 				}else{					
       		var shortName = Ext.getStore("Teams").findRecord("team_id",Ext.getCmp("addPlayer").target);
 					Ext.getCmp("teamList").setBackText(shortName.get("name_short"));
 					Ext.getCmp("addPlayer").hide();
+          Ext.getCmp("connectPlayer").hide();
 				}				
 			},
 			back:function(back,node){
-				var addPlayer = Ext.getCmp("addPlayer"); // přidávací tlačítko  
+				var addPlayer = Ext.getCmp("addPlayer"); // přidávací tlačítko
+        var connectPlayer = Ext.getCmp("connectPlayer");   
 				if(node.isLeaf()){
 					Ext.getCmp("teamList").setBackText("Týmy");
 					addPlayer.show(); // zobrazit, jsme na výpisu týmu, předchozí node byl leaf
+          connectPlayer.show();
 				}else{					
 					addPlayer.hide(); // skrýt add button, předchozí node byla soupiska týmu a jsme na přehledu týmů
+          connectPlayer.hide();
 				} 
 			}			
     }

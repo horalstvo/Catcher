@@ -5,6 +5,7 @@ extend : 'Ext.data.Model',
 	  idProperty: 'team_id',
 	    fields: [
 	    	{name: 'team_id', type: 'int'},
+        {name: 'master_id', type: 'int'},
 	      {name: 'name_short', type: 'string'},
 	      {name: 'name_full', type: 'string'}
 	  ]
