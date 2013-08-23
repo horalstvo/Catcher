@@ -107,7 +107,7 @@ Ext.define('catcher.controller.Evidence', {
                 var index = data.length - 1;
                 var jmeno = [ detail.get("name"), detail.get("surname") ];
                 data[index].items.push({
-                    text : detail.get("nick")+ " #" + detail.get("number")+" ("+jmeno.join(" ")+")",
+                    text : "<strong>"+detail.get("nick")+ " #" + detail.get("number")+"</strong> <small>("+jmeno.join(" ")+")</small>",
                     player_id : detail.get("player_id")*1,
                     name : detail.get("name"),
                     surname : detail.get("surname"),
