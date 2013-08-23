@@ -48,6 +48,7 @@ Ext.define("catcher.view.TeamRoster", {
               var store = this.getStore();
               var active_team_master = Ext.getStore("Teams").findRecord("team_id",active_team,false,false,false,true).get("master_id");
               var list = this;
+              store.clearFilter();
               store.getProxy().setExtraParam("team",active_team);
               store.load(function(){              
                 store.filter([ {
@@ -59,9 +60,9 @@ Ext.define("catcher.view.TeamRoster", {
                 var select = new Array;
                 aktivni.filter("team",active_team);
                 aktivni.each(function(item){
-                  select.push(store.findRecord("player_id",item.get("player_id"),false,false,false,true));
+                  var toPush = store.findRecord("player_id",item.get("player_id"),false,false,false,true);
+                  if(toPush !== null) select.push(toPush);                   
                 });
-                console.log(select);
                 list.select(select);
               });
             },
