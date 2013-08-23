@@ -11,13 +11,55 @@
          */
         html, body {
             height: 100%;
-            background-color: #1985D0
+            /* background-color: #1985D0 */
+            background:url("loader/pattern.png") repeat;
         }
+        
+        
+        #appLoadingIndicatorFooter {
+          font-size:0.7em;
+          position: absolute;
+          bottom:3%;
+          width:100%;
+          height:20%;
+          text-align: center;
+        }
+        
+        #appLoadingIndicatorHeader {
+          position: absolute;
+          top:5%;
+          width:100%;
+          height:50%;
+          text-align: center;                    
+        }
+        
+        #appLoadingIndicatorHeader h1 {
+          font-size:200%;
+          color:#fff; 
+          font-weight: bold; 
+          margin:0px;
+          margin-bottom:2%;
+        }                
+        
+        #appLoadingIndicatorHeader img {
+          width:50%;           
+          max-width:180px;          
+          width:auto;
+        }
+        
+        .pozadi {
+          margin:auto;
+          width:70%;
+          min-width:250px;
+          background:rgba(255,255,255,0.5);
+          border-radius:10px;
+          padding:1em 0;          
+          -webkit-border-radius: 10px;          
+        }                
 
-        #appLoadingIndicator {
+        #appLoadingIndicatorProgress {
             position: absolute;
-            top: 50%;
-            margin-top: -15px;
+            top: 64%;
             text-align: center;
             width: 100%;
             height: 30px;
@@ -27,7 +69,7 @@
             -webkit-animation-direction: linear;
         }
 
-        #appLoadingIndicator > * {
+        #appLoadingIndicatorProgress > * {
             background-color: #FFFFFF;
             display: inline-block;
             height: 30px;
@@ -54,9 +96,25 @@
 </head>
 <body>
     <div id="appLoadingIndicator">
+      <div id="appLoadingIndicatorHeader">
+        <h1>Catcher</h1>
+        <div class="pozadi">          
+          <img src="loader/logo.png" />
+        </div>
+      </div>      
+      <div id="appLoadingIndicatorFooter">
+        <div class="pozadi">
+          Build Mix kvalifikace, verze 0.9<br />
+          Online výsledky: <strong>http://www.frisbee.cz</strong> <br />
+          Vyvinuto v TM &copy; 2013          
+          <div class="cleaner"></div>           
+        </div>
+      </div>
+      <div id="appLoadingIndicatorProgress">
         <div></div>
         <div></div>
         <div></div>
+      </div>      
     </div>
 </body>
 </html>
