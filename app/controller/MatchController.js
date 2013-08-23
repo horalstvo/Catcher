@@ -169,6 +169,8 @@ Ext.define('catcher.controller.MatchController', {
         Ext.Msg.confirm("Zadat bod?", message, function(response) {
             if (response == "yes") {
                 catcher.app.getController("MatchController").addPointInternal(assist_player_id);
+            }else{
+              list.deselectAll();
             }
         });
     },
