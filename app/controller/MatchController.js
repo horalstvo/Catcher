@@ -192,12 +192,13 @@ Ext.define('catcher.controller.MatchController', {
           Ext.Viewport.setMasked({
             xtype: "loadmask",
             message : "Ukládám bod na frisbee.cz"
-          });                  
+          });
+          
           points.syncWithListener(function(){
             var controller = catcher.app.getController("MatchController");            
             controller.updateMatchPoints(point.get("match_id"));            
             controller.updateMatchInfo(point.get("match_id"));
-          });                                                                                                                                                                                                
+          });                                                                                                                                                                                                          
     },
     
     updateMatchInfo : function(match_id){
