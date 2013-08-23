@@ -8,7 +8,8 @@ Ext.define("catcher.view.TeamRoster", {
         store : "Rosters",
         itemTpl : "<strong>{nick} #{number}</strong> <small>({surname} {name})</small>",
         onItemDisclosure : false,
-        loadingText: "Stahuji kompletní soupisku týmu",                
+        loadingText: "Stahuji kompletní soupisku týmu",
+        styleHtmlContent:true,                        
         items:[
           {
             docked: 'top',
@@ -36,16 +37,54 @@ Ext.define("catcher.view.TeamRoster", {
                 iconCls: "check2",
                 ui: "confirm",
                 handler: function(){
-                  console.log(this.up("teamRoster").getSelection());                  
+                  var list = this.up("teamRoster");
+                  var store = list.getStore();
+                  var roster = list.getSelection();
+                  var active_team = Ext.getCmp("addPlayer").target;
+                  var modalPanel = list.up("modalPanel");
+                  
+                  var length = roster.length;
+                  for (var i = 0; i < length; i++) {
+                    roster[i].setDirty();
+                  }
+                                    
+                  list.setMasked({
+                    xtype : 'loadmask',
+                    message : 'Připojuji hráče k týmu pro turnaj'
+                  });
+                  
+                  Ext.Ajax.request({
+                    url:"http://www.frisbee.cz/catcher/app/scripts/data_process.php?operation=clear_roster",
+                    params:{
+                      team: active_team
+                    },
+                    success: function(response){
+                      store.getProxy().setExtraParam("team",active_team);                                            
+                      store.syncWithListener(function(){
+                        Ext.getStore("Players").load(function(){
+                          list.setMasked(false);
+                          modalPanel.hide();
+                          Ext.Viewport.setMasked({
+                            xtype : 'loadmask',
+                            message : 'Sestavuji soupisky na tomto zařízení'
+                          });                          
+                          catcher.app.getController("Evidence").sestavEvidenci(active_team);
+                        });
+                      });
+                    }
+                  });
+                  function updateRoster(){
+                    
+                  }
                 }
               }
             ]
           },
         ],
         listeners : {
-            painted : function() {              
-              var active_team = Ext.getCmp("addPlayer").target;
-              var store = this.getStore();
+            painted : function() {
+              var store = this.getStore();              
+              var active_team = Ext.getCmp("addPlayer").target;              
               var active_team_master = Ext.getStore("Teams").findRecord("team_id",active_team,false,false,false,true).get("master_id");
               var list = this;
               store.clearFilter();

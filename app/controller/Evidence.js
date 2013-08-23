@@ -129,11 +129,9 @@ Ext.define('catcher.controller.Evidence', {
         Ext.Viewport.setMasked(false);
 
         if (team_id > 0) {
-            Ext.Msg.alert("OK", "Provedeno", function() {
-                var parent = evidence.findRecord("team_id", team_id, false, false, false, true);
-                nl.goToNode(parent);
-                Ext.getCmp("addPlayer").show();
-            });
+          var parent = evidence.findRecord("team_id", team_id, false, false, false, true);
+          nl.goToNode(parent);
+          Ext.getCmp("addPlayer").show();
         }
 
     }

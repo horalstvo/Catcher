@@ -44,7 +44,7 @@ $cols["points"] = array("point_id"=>"id","team_id"=>"team_id","player_id"=>"play
 $cols["rosters"] = $cols["players"];
 
 $cols_app = $cols;
-$cols_app["players"]["player_id"] = "player_id";
+$cols_app["players"]["player_id"] = $cols_app["rosters"]["player_id"] = "player_id";
 $cols_app["matches"]["match_id"] = "match_id";
 $cols_app["points"]["point_id"] = "point_id";
 
@@ -86,6 +86,7 @@ function update_match($match_id = false){
     mysql_query("UPDATE mod_catcher_matches SET score_home = '$score_home[score]', score_away = '$score_away[score]' WHERE id = $match_id");
   }
 }
+ 
 
 if($method == "POST"){ // insert dat ve storu
   $data = file_get_contents("php://input");
@@ -93,6 +94,8 @@ if($method == "POST"){ // insert dat ve storu
   foreach($cols_app[$store] as $index=>$value){
   	$data[$value] = convert2($data[$value]);
 	}
+    
+
   switch($store){
     case "matches":      
       mysql_query("INSERT INTO mod_catcher_$store (tournament_id,home_id,away_id,field,length,time) VALUES ($tournament_id,$data[home_id],$data[away_id],$data[field],'$data[length]',$data[time])");
@@ -129,6 +132,14 @@ if($method == "PUT"){ // update dat ve storu
   	$data[$value] = convert2($data[$value]);
 	}
 	switch($store){
+    case "rosters":
+      mysql_query("INSERT INTO $tab4 (player_id,subteam_id,tournament_id) VALUES ($data[player_id],$_GET[team],$tournament_id)");
+      echo mysql_error();
+      mysql_query("INSERT INTO $tab7 (player_id,team_id,tournament_id) VALUES ($data[player_id],$_GET[team],$tournament_id)");
+      echo mysql_error();
+      $output["dirty"]=false;
+    break;
+    
 		case "players":		
 			mysql_query("UPDATE mod_catcher_$store SET name = '$data[name]', surname = '$data[surname]', number = '$data[number]', team = $data[team], nick='$data[nick]' WHERE id = $data[player_id]");						
 		break;
