@@ -91,7 +91,7 @@ Ext.define('catcher.view.TeamList', {
 					ui: "decline",
 					id: "deletePlayer",
 					handler: function(){
-						Ext.Msg.confirm("Smazat hráče","Opravdu chcete hráče smazat?",
+						Ext.Msg.confirm("Smazat hráče","Opravdu natvrdo smazat hráče? Tato možnost je pouze pro případ omylem přidaného hráče přes tuto aplikaci, který není v Evidenci ČALD. Pokud hráč na turnaji nehraje, stačí ho odpojit od týmu v soupisce týmu.",
 							function(response){
 								if(response == "yes") catcher.app.getController("Evidence").deletePlayer()
 							}              
