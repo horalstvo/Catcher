@@ -51,6 +51,14 @@ Ext.define("catcher.view.MatchDetailCounter", {
             text : "+",
             ui: "away"
         } ],
-    }]
+    }],
+      listeners : {
+          painted : function(){
+            this.query('.button').forEach(function(c){
+              var pressedCls = "x-button-pressed";         
+              c.removeCls(pressedCls);
+            });
+          }          
+      },
   }
 });
