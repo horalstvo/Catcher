@@ -194,14 +194,14 @@ Ext.define('catcher.controller.MatchController', {
     updateMatchInfo : function(match_id,pop_level){
       pop_level = typeof pop_level !== 'undefined' ? pop_level : 2;
       if(pop_level>0) pop_level = 2;
-      if(pop_level == 0) pop_level = 1;
+      if(pop_level == 0) pop_level = 1;      
       var matches = Ext.getStore("Matches");
       matches.getProxy().setExtraParam("id",match_id);
       matches.load(function(){
         var match = matches.findRecord("match_id",match_id,false,false,false,true);
         var controller = catcher.app.getController("MatchController");
         controller.fillMatchDetailContent(match.data);        
-        controller.getMatchesNavigation().pop(pop_level);                
+        if(pop_level > 0)controller.getMatchesNavigation().pop(pop_level);                
       });
       matches.getProxy().setExtraParams({});
     },    
@@ -330,22 +330,73 @@ Ext.define('catcher.controller.MatchController', {
       if(Ext.getCmp("matchDetailScore").isPainted()) var form = this.getMatchDetailScore();
       
       values = form.getValues(true, true);
+            
       
       var matches = Ext.getStore("Matches");
       var match = matches.findRecord("match_id",values.match_id,false,false,true);
       
-
-      match.set(values);            
-      match.setDirty();
+      var diffs = new Array;
+      var diffs_fatal = new Array;
       
-      matches.getProxy().setExtraParam("match_id",values.match_id);                 
+      if(values.score_home !== undefined){
+        if(values.score_home < match.get("score_home")) diffs_fatal.push("Skóre "+match.get("home_name_short")+" je menší než počet uložených bodů ("+match.get("score_home")+"), pro uložení zápasu smaž některé body!");
+        if(values.score_home > match.get("score_home")) diffs.push("Skóre "+match.get("home_name_short")+" je větší než počet uložených bodů ("+match.get("score_home")+"), při uložení dojde k vygenerování anonymních bodů. Opravdu?");
+        
+        if(values.score_away < match.get("score_away")) diffs_fatal.push("Skóre "+match.get("away_name_short")+" je menší než počet uložených bodů ("+match.get("score_away")+"), pro uložení zápasu smaž některé body!");
+        if(values.score_away > match.get("score_away")) diffs.push("Skóre "+match.get("away_name_short")+" je větší než počet uložených bodů ("+match.get("score_away")+"), při uložení dojde k vygenerování anonymních bodů. Opravdu?"); 
+      }
       
-      matches.syncWithListener(function(){
-        Ext.Msg.alert("OK","Informace o zápasu aktualizovány.");
-        Ext.Viewport.setMasked(false);
-      });                                  
+      if(diffs_fatal.length > 0){
+        Ext.Msg.alert("Chybné skóre",diffs_fatal.join("<br />"));
+      }else{
+        if(diffs.length > 0){
+          Ext.Msg.confirm("Chybné skóre",diffs.join("<br />"),function(response){              
+            if(response == "yes") {
+              var points = Ext.getStore("Points");              
+              function equalizer(difference,team_id,match_id){
+                var i = 0;
+                while(difference > i){
+                  var equalizer = Ext.create("catcher.model.Point", {
+                      team_id : team_id,
+                      player_id : 0,
+                      match_id : match.get("match_id"),
+                      assist_player_id : 0,
+                      time : Math.round(+new Date()/1000)+i
+                  });
+                  points.add(equalizer);                
+                  i++;
+                }                
+              }
+              if(values.score_home > match.get("score_home")) equalizer((values.score_home-match.get("score_home")),match.get("home_id"));
+              if(values.score_away > match.get("score_away")) equalizer((values.score_away-match.get("score_away")),match.get("away_id"));
+              points.syncWithListener(function(){
+                var controller = catcher.app.getController("MatchController");            
+                controller.updateMatchPoints(match.get("match_id"));            
+                controller.updateMatchInfo(match.get("match_id"),-1);
+                saveMatchSettings(match,values);
+              });              
+            }                                  
+          });
+        }else{
+          saveMatchSettings(match,values);
+        }
+      }
+      Ext.Viewport.setMasked(false);      
     }
 });
+
+function saveMatchSettings(match,values){
+  var matches = Ext.getStore("Matches");
+  match.set(values);            
+  match.setDirty();
+  
+  matches.getProxy().setExtraParam("match_id",values.match_id);                 
+  
+  matches.syncWithListener(function(){
+    Ext.Msg.alert("OK","Informace o zápasu aktualizovány.");            
+  });
+}
+
 
 function fullName(player) {    
     return player.nick + " #" + player.number + " <small>(" + player.surname + " " + player.name + ")</small>";
