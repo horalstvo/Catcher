@@ -10,10 +10,13 @@ Ext.define("catcher.view.ScoreList", {
         iconCls : "time",
         styleHtmlContent : true,
         itemTpl : "Stav: {score_home}:{score_away}, <small>{time:date('G:i, j.n')}</small><br /><strong>S: {scoringPlayer}</strong><br />A: {assistPlayer}",
-        onItemDisclosure : true,
+        onItemDisclosure : false,
         listeners : {
             activate : function() {
                 this.getStore().sort();
+            },
+            painted: function() {
+              this.deselectAll();
             }
         }
     },

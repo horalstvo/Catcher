@@ -8,6 +8,6 @@ var main = Ext.define('catcher.view.Main', {
 			xtype : 'loginPanel'
 		}, {
 			xtype : "aboutPanel"
-		} ]
+		} ],
 	}
 });
