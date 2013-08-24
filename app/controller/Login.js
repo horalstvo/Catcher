@@ -54,10 +54,7 @@ Ext.define('catcher.controller.Login', {
                     Ext.Viewport.add({
                         xtype : "tournamentPanel"
                     });
-                    Ext.Viewport.animateActiveItem("tournamentPanel", {
-                        type : "slide",
-                        direction : "left"
-                    });
+                    Ext.Viewport.setActiveItem("tournamentPanel");
                     Ext.Viewport.setMasked(false);
                     players = Ext.getStore("Players");
 
