@@ -13,33 +13,33 @@ Ext.define('catcher.controller.MatchController', {
         },
         control : {
             "matchesList" : {
-                disclose : "showMatchDetail",
+//                 disclose : "showMatchDetail",
                 select : "showMatchDetail",
                 itemtaphold: "confirmMatchDelete",
                 itemswipe: "confirmMatchDelete"
             },
             "matchesNavigation matchPlayerList[name=score]" : {
-                disclose : "showAssistPlayer",
+//                 disclose : "showAssistPlayer",
                 select : "showAssistPlayer"
             },
             "matchesNavigation matchPlayerList[name=assist]" : {
-                disclose : "addPoint",
+//                 disclose : "addPoint",
                 select : "addPoint"
             },
             "matchDetail button[name=scoreHome]" : {
-                tap : "showScoreHome"
+                tap : "showScore"
             },
             "matchDetail button[name=scoreAway]" : {
-                tap : "showScoreAway"
+                tap : "showScore"
             },
             "matchDetail button[name=addPointHome]" : {
-                tap : "addPointHome"
+                tap : "showAddPoint"
             },
             "matchDetail button[name=addPointAway]" : {
-                tap : "addPointAway"
+                tap : "showAddPoint"
             },
             "scoreList" : {
-                disclose : "showEditPoint",
+//                 disclose : "showEditPoint",
                 select : "showEditPoint"
             },
             "editPointDetail button[name=editConfirm]" : {
@@ -81,7 +81,7 @@ Ext.define('catcher.controller.MatchController', {
         });
         Ext.getCmp("matchesNavigation").query("button[navigation_only=true]").forEach(function(el){el.hide()}); // skrytí filtrovacích tlačítek
         Ext.getCmp("tournament").getTabBar().hide(); // skrytí hlavní navigace turnaje
-        var session = Ext.getStore("Session").findRecord("uuid", Ext.device.Device.uuid);
+        var session = getSession();
         session.match_id = match.match_id;
         this.fillMatchDetailContent(match);
         this.fillMatchDetailSettings(match);
@@ -93,28 +93,10 @@ Ext.define('catcher.controller.MatchController', {
         matchDetailScore.query("numberfield[name=spirit_away]")[0].setLabel("Spirit "+match.away_name_short);
     },
 
-    addPointHome : function() {
-        var session = Ext.getStore("Session").findRecord("uuid", Ext.device.Device.uuid);
-        var matchId = session.match_id;
-        var match = Ext.getStore("Matches").findRecord("match_id", matchId, false, false, false, true).data;
-
-        session.score_team_id = match.home_id;
-
-        this.showAddPoint();
-    },
-
-    addPointAway : function() {
-        var session = Ext.getStore("Session").findRecord("uuid", Ext.device.Device.uuid);
-        var matchId = session.match_id;
-        var match = Ext.getStore("Matches").findRecord("match_id", matchId, false, false, false, true).data;
-
-        session.score_team_id = match.away_id;
-
-        this.showAddPoint();
-    },
-
-    showAddPoint : function() {
-        var session = Ext.getStore("Session").findRecord("uuid", Ext.device.Device.uuid);
+    showAddPoint : function(event) {
+        var session = getSession();
+        var match = Ext.getStore("Matches").findRecord("match_id", session.match_id, false, false, false, true).data;         
+        session.score_team_id = match[event.getUi()+"_id"];
 
         var team = Ext.getStore("Teams").findRecord("team_id", session.score_team_id, false, false, false, true).data;
 
@@ -125,6 +107,10 @@ Ext.define('catcher.controller.MatchController', {
                 return item.get('team') == session.score_team_id;
             }
         } ]);
+        
+        if(players.getCount() == 0){
+          this.addPointInternal(0);
+        }
         players.sort();
 
         this.getMatchesNavigation().push({
@@ -136,7 +122,7 @@ Ext.define('catcher.controller.MatchController', {
     },
 
     showAssistPlayer : function(list, record) {
-        var session = Ext.getStore("Session").findRecord("uuid", Ext.device.Device.uuid);
+        var session = getSession();
         session.score_player_id = record.data.player_id;
 
         var players = Ext.getStore("Players");
@@ -159,7 +145,7 @@ Ext.define('catcher.controller.MatchController', {
     },
 
     addPoint : function(list, record) {
-        var session = Ext.getStore("Session").findRecord("uuid", Ext.device.Device.uuid);
+        var session = getSession();
         var assist_player_id = record.data.player_id;
 
         var scorer = Ext.getStore("Players").findRecord("player_id", session.score_player_id, false, false, false, true).data;
@@ -176,9 +162,11 @@ Ext.define('catcher.controller.MatchController', {
     },
 
     addPointInternal : function(assist_player_id) {
-        var session = Ext.getStore("Session").findRecord("uuid", Ext.device.Device.uuid);
+        var session = getSession();
         var points = Ext.getStore("Points");
         var matches = Ext.getStore("Matches");
+        
+        if(assist_player_id == 0) session.score_player_id = 0;
 
         var point = Ext.create("catcher.model.Point", {
             team_id : session.score_team_id,
@@ -199,18 +187,21 @@ Ext.define('catcher.controller.MatchController', {
           points.syncWithListener(function(){
             var controller = catcher.app.getController("MatchController");            
             controller.updateMatchPoints(point.get("match_id"));            
-            controller.updateMatchInfo(point.get("match_id"));
+            controller.updateMatchInfo(point.get("match_id"),assist_player_id);
           });                                                                                                                                                                                                          
     },
     
-    updateMatchInfo : function(match_id){
+    updateMatchInfo : function(match_id,pop_level){
+      pop_level = typeof pop_level !== 'undefined' ? pop_level : 2;
+      if(pop_level>0) pop_level = 2;
+      if(pop_level == 0) pop_level = 1;
       var matches = Ext.getStore("Matches");
       matches.getProxy().setExtraParam("id",match_id);
       matches.load(function(){
         var match = matches.findRecord("match_id",match_id,false,false,false,true);
         var controller = catcher.app.getController("MatchController");
         controller.fillMatchDetailContent(match.data);        
-        controller.getMatchesNavigation().pop(2);                
+        controller.getMatchesNavigation().pop(pop_level);                
       });
       matches.getProxy().setExtraParams({});
     },    
@@ -225,23 +216,14 @@ Ext.define('catcher.controller.MatchController', {
       points.getProxy().setExtraParams({});
     },
 
-    showScoreHome : function() {
+    showScore : function(event) {
         var matchId = Ext.getStore("Session").findRecord("uuid", Ext.device.Device.uuid).match_id;
         var match = Ext.getStore("Matches").findRecord("match_id", matchId, false, false, false, true).data;
+        var team = event.getUi();
         this.getMatchesNavigation().push({
             xtype : "scoreList",
-            title : "Skóre " + match.home_name_short,
-            store : getTeamScore(match.match_id, match.home_id)
-        });
-    },
-
-    showScoreAway : function() {
-        var matchId = Ext.getStore("Session").findRecord("uuid", Ext.device.Device.uuid).match_id;
-        var match = Ext.getStore("Matches").findRecord("match_id", matchId, false, false, false, true).data;
-        this.getMatchesNavigation().push({
-            xtype : "scoreList",
-            title : "Skóre " + match.away_name_short,
-            store : getTeamScore(match.match_id, match.away_id)
+            title : "Skóre " + match[team+"_name_short"],
+            store : getTeamScore(match.match_id, match[team+"_id"])
         });
     },
 
@@ -317,7 +299,7 @@ Ext.define('catcher.controller.MatchController', {
         });
       });
       
-      var session = Ext.getStore("Session").findRecord("uuid", Ext.device.Device.uuid);
+      var session = getSession();
       var tournament_data = Ext.getStore("Tournaments").findRecord("tournament_id",session.get("tournament_id"),false,false,true);
       var fields2push = this.composeFields(tournament_data.get("fields"));      
       this.getMatchDetailSettings().query("selectfield[name=field]")[0].setOptions(fields2push).setValue(match.field);            
@@ -388,16 +370,17 @@ function getTeamScore(matchId, teamId) {
 
         var scoringPlayer = players.findRecord("player_id", new String(item.get("player_id")));
         var assistPlayer = players.findRecord("player_id", new String(item.get("assist_player_id")));
-        if(scoringPlayer !== null) {                  
-          pointsToDisplay.push({          
-              scoringPlayer : fullName(scoringPlayer.data),
-              assistPlayer : assistPlayer != null ? fullName(assistPlayer.data) : "",
-              pointId : item.get("point_id"),
-              time : item.get("time"),
-              score_home: item.get("score_home"),
-              score_away: item.get("score_away")              
-          });
-        }
+        if(scoringPlayer == null) {
+          
+        }                  
+        pointsToDisplay.push({          
+            scoringPlayer : assistPlayer != null ? fullName(scoringPlayer.data) : "nezadáno",
+            assistPlayer : assistPlayer != null ? fullName(assistPlayer.data) : "nezadáno",
+            pointId : item.get("point_id"),
+            time : item.get("time"),
+            score_home: item.get("score_home"),
+            score_away: item.get("score_away")              
+        });
     });        
 
     Ext.define("PointView", {
@@ -457,4 +440,8 @@ function createPlayerOption(player) {
         text : fullNameInput(player),
         value : player.player_id
     };
+}
+
+function getSession(){
+  return Ext.getStore("Session").findRecord("uuid", Ext.device.Device.uuid);
 }
