@@ -14,7 +14,7 @@ $tab4 = "mod_catcher_player2tournament";
 $tab7 = "mod_catcher_player2subteam";
 
 switch($operation){
-  case "clear_roster":
+  case "clear_roster": // sestavování soupisky pro turnaj
     mysql_query("DELETE FROM $tab4 WHERE subteam_id = $_POST[team]");
     mysql_query("DELETE FROM $tab7 WHERE team_id = $_POST[team]");
   break;
